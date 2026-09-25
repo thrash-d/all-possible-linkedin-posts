@@ -27,28 +27,28 @@ exact same post.
 |`linkedin-posts-standalone.html`|The finished page, dictionary embedded. The deliverable.|**Yes. This is the only file you need to run it.**|
 |`linkedin-posts.html`|The editable source (\~24KB). Same page, but it loads the dictionary from `lexicon.json` instead of embedding it, so it's small enough to actually read and edit. Won't run from a double-click (browsers block a local file from fetching another). Edit here, then rebuild the standalone.|No, source only|
 |`lexicon.json`|The word data: \~38k English words with their forms, syllable counts, a business-closeness score, and 99 theme word-lists. Generated; don't hand-edit.|No, build input|
-|`build/build\_lexicon.py`|Regenerates `lexicon.json` from WordNet. Only needed if you change the word list, themes, or frequency cutoff. Slow (needs spaCy).|No, build tool|
-|`build/make\_standalone.py`|Bundles `linkedin-posts.html` + `lexicon.json` into `linkedin-posts-standalone.html`.|No, build tool|
-|`build/requirements.txt`|Python packages for `build\_lexicon.py`.|No, build tool|
+|`build/build_lexicon.py`|Regenerates `lexicon.json` from WordNet. Only needed if you change the word list, themes, or frequency cutoff. Slow (needs spaCy).|No, build tool|
+|`build/make_standalone.py`|Bundles `linkedin-posts.html` + `lexicon.json` into `linkedin-posts-standalone.html`.|No, build tool|
+|`build/requirements.txt`|Python packages for `build_lexicon.py`.|No, build tool|
 
 ## Changing it
 
 To change templates, dials, layout, or styling, edit `linkedin-posts.html`, then run:
 
 ```
-python build/make\_standalone.py
+python build/make_standalone.py
 ```
 
 That regenerates `linkedin-posts-standalone.html`. Done.
 
-To change words or themes, edit the seed lists at the top of `build/build\_lexicon.py`
-(`BUSINESS\_SEEDS`, `THEMES`), then regenerate the data and rebuild the page:
+To change words or themes, edit the seed lists at the top of `build/build_lexicon.py`
+(`BUSINESS_SEEDS`, `THEMES`), then regenerate the data and rebuild the page:
 
 ```
 pip install -r build/requirements.txt
-python -m spacy download en\_core\_web\_md
-python build/build\_lexicon.py
-python build/make\_standalone.py
+python -m spacy download en_core_web_md
+python build/build_lexicon.py
+python build/make_standalone.py
 ```
 
 ## How a post is built
@@ -61,7 +61,7 @@ biased toward the theme and toward business by the Coherence dial, with the
 right grammatical forms (plurals, tenses).
 5. Generate a fake name, title, company, and hashtags the same way.
 
-Same idea as the `all\_possible\_haikus.py` generator, pointed at LinkedIn: the voice
+Same idea as the `all_possible_haikus.py` generator, pointed at LinkedIn: the voice
 lives in the rhythm, so random words in the right sentence shapes still read as
 LinkedIn.
 
