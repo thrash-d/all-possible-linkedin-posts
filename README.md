@@ -61,7 +61,3 @@ biased toward the theme and toward business by the Coherence dial, with the
 right grammatical forms (plurals, tenses).
 5. Generate a fake name, title, company, and hashtags the same way.
 
-Same idea as the `all_possible_haikus.py` generator, pointed at LinkedIn: the voice
-lives in the rhythm, so random words in the right sentence shapes still read as
-LinkedIn.
-
