@@ -1,0 +1,6 @@
+spacy
+nltk
+pronouncing
+wordfreq
+lemminflect
+numpy

@@ -1,0 +1,494 @@
+<title>All Possible LinkedIn Posts</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #141414;
+    --surface: #1b1b1c;
+    --line: #2a2a2d;
+    --line-strong: #3a3a3f;
+    --text: #f5f6f8;
+    --text-2: #c9ccd2;
+    --muted: #969eaa;
+    --faint: #5f6570;
+    --accent: #e84430;
+    --accent-ink: #141414;
+    --radius: 6px;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, Menlo, Consolas, monospace;
+  }
+  html, body { background: var(--bg); }
+  body {
+    color: var(--text-2); font-family: var(--sans); font-size: 15px; line-height: 1.55;
+    padding-inline: 16px; padding-block: 32px 64px; font-variant-numeric: tabular-nums;
+  }
+  .wrap { max-width: 600px; margin: 0 auto; display: grid; gap: 24px; }
+  header { display: grid; gap: 6px; }
+  h1 { margin: 0; color: var(--text); font-size: 24px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; }
+  .sub { margin: 0; color: var(--muted); }
+  .count { margin: 0; color: var(--faint); font-family: var(--mono); font-size: 12px; }
+
+  .controls { display: flex; flex-wrap: wrap; align-items: end; gap: 16px 24px; padding-block: 16px; border-block: 1px solid var(--line); }
+  .dial { display: grid; gap: 4px; min-width: 120px; flex: 1 1 120px; }
+  .dial label { color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; gap: 8px; }
+  .dial output { color: var(--text-2); }
+  input[type="range"] { width: 100%; accent-color: var(--accent); }
+  button { font: inherit; cursor: pointer; border-radius: var(--radius); }
+  .primary { background: var(--accent); color: var(--accent-ink); border: 0; padding: 8px 14px; font-weight: 600; font-size: 14px; }
+  .primary:hover { filter: brightness(1.06); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .feed { display: grid; gap: 16px; }
+  .post { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; }
+  .author { display: flex; gap: 12px; align-items: flex-start; }
+  .avatar { flex: 0 0 44px; height: 44px; border-radius: 50%; background: var(--line-strong); color: var(--text); display: grid; place-items: center; font-weight: 600; font-size: 15px; }
+  .who { display: grid; gap: 1px; min-width: 0; }
+  .name { color: var(--text); font-weight: 600; }
+  .headline { color: var(--muted); font-size: 13px; line-height: 1.35; }
+  .meta { color: var(--faint); font-size: 12px; }
+  .body { white-space: pre-line; color: var(--text-2); overflow-wrap: anywhere; }
+  .body.clamped { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .more { justify-self: start; background: none; border: 0; padding: 0; color: var(--muted); font-size: 14px; }
+  .more:hover { color: var(--text); }
+  .stats { color: var(--faint); font-size: 12px; padding-top: 8px; border-top: 1px solid var(--line); }
+  .comments { display: grid; gap: 10px; }
+  .comment { display: grid; gap: 1px; padding-left: 12px; border-left: 1px solid var(--line-strong); }
+  .comment .c-name { color: var(--text); font-size: 13px; font-weight: 500; }
+  .comment .c-head { color: var(--faint); font-size: 12px; }
+  .comment .c-text { color: var(--text-2); font-size: 14px; }
+  .more-comments { color: var(--faint); font-size: 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .actions button { background: none; border: 0; padding: 0; color: var(--muted); font-size: 13px; }
+  .actions button:hover { color: var(--text); }
+  .no { margin-left: auto; color: var(--faint); font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
+  .sentinel { height: 1px; }
+  .loading { color: var(--faint); font-size: 12px; text-align: center; }
+  footer { color: var(--faint); font-size: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+  .mark { color: var(--text); font-weight: 600; }
+  .mark span { color: var(--accent); }
+  .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--line-strong); color: var(--text); padding: 6px 12px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>All Possible LinkedIn Posts</h1>
+    <p class="sub">Every post, eventually.</p>
+    <p class="count" id="count">Loading the dictionary…</p>
+  </header>
+
+  <section class="controls" aria-label="Post settings">
+    <div class="dial">
+      <label for="coh">Coherence <output id="cohOut" for="coh"></output></label>
+      <input id="coh" type="range" min="0" max="3" step="1" value="2">
+    </div>
+    <div class="dial">
+      <label for="brag">Humblebrag <output id="bragOut" for="brag"></output></label>
+      <input id="brag" type="range" min="0" max="3" step="1" value="1">
+    </div>
+    <div class="dial">
+      <label for="dash">Em dashes <output id="dashOut" for="dash"></output></label>
+      <input id="dash" type="range" min="0" max="3" step="1" value="1">
+    </div>
+    <div class="dial">
+      <label for="tags">Hashtags <output id="tagsOut" for="tags"></output></label>
+      <input id="tags" type="range" min="0" max="8" step="1" value="4">
+    </div>
+    <div class="dial" style="flex:0 0 auto;min-width:0">
+      <label for="haiku">Haiku</label>
+      <input id="haiku" type="checkbox">
+    </div>
+    <button class="primary" id="refresh" type="button">Refresh feed</button>
+  </section>
+
+  <main class="feed" id="feed" aria-live="polite"></main>
+  <div class="sentinel" id="sentinel"></div>
+  <p class="loading" id="loading"></p>
+
+  <footer>
+    <span>Parody. Everyone here is made up. Words are the whole English dictionary.</span>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const feed = $("feed");
+
+  // ---------- word bank ----------
+  // Filled from lexicon.json. Each POS is an array of rows; columns per POS
+  // come from LEX.columns. We index columns by name once loaded.
+  let LEX = null, COL = {}, THEMES = [], themeNames = [];
+
+  function col(pos, name) { return COL[pos][name]; }
+  function wordRow(pos, i) { return LEX.words[pos][i]; }
+
+  // ---------- rng ----------
+  // Every post is one string seed. A string-seeded mulberry32 gives a repeatable
+  // stream, so a copied link rebuilds the exact post regardless of the feed
+  // around it. Inlined so the page has no external dependency.
+  function makeRng(seed) {
+    let h = 1779033703 ^ seed.length;
+    for (let i = 0; i < seed.length; i++) {
+      h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    let a = h >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function randSeed() { return Math.random().toString(36).slice(2, 11); }
+
+  // A picker bound to one post: theme + coherence decide the candidate pool.
+  function makePicker(rng, themeIdx, coherence) {
+    const theme = themeIdx == null ? null : THEMES[themeIdx];
+    // coherence: 0 chaos .. 3 tight. Blend of theme pool, corp score, whole dict.
+    const themeWeight = [0, 0.45, 0.7, 0.9][coherence];
+    const corpBias = [0, 0.15, 0.4, 0.75][coherence];
+    const wildChance = [1, 0.5, 0.25, 0.12][coherence];
+
+    function fromWhole(pos) {
+      const arr = LEX.words[pos];
+      return arr[Math.floor(rng() * arr.length)];
+    }
+    function fromTheme(pos) {
+      if (!theme || !theme[pos] || !theme[pos].length) return fromWhole(pos);
+      const list = theme[pos];
+      return LEX.words[pos][list[Math.floor(rng() * list.length)]];
+    }
+    function fromCorp(pos) {
+      // rejection-sample toward higher corp score
+      const c = col(pos, "corp");
+      if (c == null) return fromWhole(pos);
+      let best = fromWhole(pos);
+      for (let k = 0; k < 3; k++) {
+        const cand = fromWhole(pos);
+        if ((cand[c] || 0) > (best[c] || 0)) best = cand;
+      }
+      return best;
+    }
+    return function pick(pos) {
+      const r = rng();
+      let row;
+      if (r < themeWeight) row = fromTheme(pos);
+      else if (r < themeWeight + corpBias) row = fromCorp(pos);
+      else row = fromWhole(pos);
+      // occasional wild word from the whole dictionary regardless
+      if (rng() < wildChance * 0.4) row = fromWhole(pos);
+      return row;
+    };
+  }
+
+  // ---------- word forms ----------
+  const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
+  function form(pick, spec) {
+    // spec like "noun", "noun.pl", "verb.ing", "adj", "adv", "propn"
+    const [posKey, variant] = spec.split(".");
+    const posMap = { noun: "NOUN", nouns: "NOUN", verb: "VERB", adj: "ADJ", adv: "ADV", propn: "PROPN" };
+    const pos = posMap[posKey];
+    const row = pick(pos);
+    if (pos === "NOUN") {
+      if (variant === "pl") return row[col("NOUN", "plural")];
+      return row[col("NOUN", "word")];
+    }
+    if (pos === "VERB") {
+      const map = { s: "s", past: "past", ing: "ing", pp: "pp", base: "word" };
+      return row[col("VERB", map[variant] || "word")];
+    }
+    return row[col(pos, "word")];
+  }
+
+  // ---------- templates ----------
+  // Each beat is a category. A post is a chain of beats. Slots:
+  //   {noun} {noun.pl} {verb} {verb.s} {verb.past} {verb.ing} {verb.pp}
+  //   {adj} {adv} {Noun} (capitalized) etc. {N} = number, {emoji} handled later.
+  const T = {
+    hook: [
+      "Unpopular opinion: {adj} {noun.pl} are killing your {noun}.",
+      "I {verb.past} my best {noun} yesterday.",
+      "{N} years ago I was {verb.ing} {noun.pl} for a living.",
+      "Nobody talks about the {noun} of {verb.ing}.",
+      "Your {noun} is not a {noun}. It's a {noun}.",
+      "I turned down a {adj} {noun} today. Here's why.",
+      "Stop {verb.ing}. Start {verb.ing}.",
+      "This is the hardest post I've ever {verb.pp}.",
+      "My {noun} taught me more about {noun} than any {noun}.",
+      "Most {noun.pl} are {verb.ing} the wrong {noun.pl}.",
+      "I asked {N} {noun.pl} the same question. The answers {verb.past} me.",
+      "The best {noun} I ever received came from a {noun}.",
+      "Humbled to announce that I am now {verb.ing} {noun.pl} full-time.",
+      "Let me tell you about the day a {noun} changed my {noun}."
+    ],
+    story: [
+      "No {noun}. No {noun}. Just {noun}.",
+      "It {verb.past} for {N} {noun.pl} straight and never once {verb.past}.",
+      "Everyone said the {noun} was {adj}. They were {adv} wrong.",
+      "I {verb.past} {N} {noun.pl} before breakfast.",
+      "The {noun} looked me dead in the eye and {verb.past}.",
+      "We {verb.past} the {noun}, then we {verb.past} the {noun}.",
+      "My {noun} begged me not to {verb} it. I {verb.past} it anyway.",
+      "It cost me a {noun}, a {noun}, and most of my {noun}.",
+      "By {noun} {N}, the whole {noun} was {verb.ing}.",
+      "I {verb.past} in my car for {N} minutes.",
+      "Then the {noun} {verb.past}. And everything {verb.past}."
+    ],
+    turn: [
+      "And that's when it hit me.",
+      "I got {adj}.",
+      "I had to pull over and write this down.",
+      "My hands were {verb.ing}.",
+      "I've never felt more like a {noun}.",
+      "That {noun} taught me everything I know about {noun}.",
+      "It was the most {adj} {noun} of my career.",
+      "Nobody prepares you for that kind of {noun}."
+    ],
+    lesson: [
+      "1️⃣ {Noun} is a {noun}. {Noun} is not.",
+      "2️⃣ {Adj} beats {adj}. Every single time.",
+      "3️⃣ Your {noun} is your {noun}.",
+      "1️⃣ {Verb} slow. {Verb} fast.",
+      "2️⃣ {Noun} is the enemy of {noun}.",
+      "3️⃣ The real {noun} was the {noun.pl} we {verb.past} along the way.",
+      "1️⃣ If you're not {verb.ing}, you're not {verb.ing}.",
+      "2️⃣ {Noun} eats {noun} for breakfast.",
+      "3️⃣ Never {verb} a {noun} that can {verb} itself."
+    ],
+    brag: [
+      "(Posting this from {Propn}.)",
+      "(We just {verb.past} our Series {L}, but that's not the point.)",
+      "(Not a humblebrag. Just {adj}.)",
+      "Sent from my {noun} overlooking the {noun}.",
+      "(I've been asked not to share our {noun}, but it's up.)",
+      "My keynote in {Propn} went {adv} well, by the way."
+    ],
+    closer: [
+      "Agree?",
+      "Thoughts?",
+      "What would you add?",
+      "Repost if this {verb.past} with you. ♻️",
+      "Let that {noun} sink in.",
+      "Who needed to hear this today?",
+      "{Noun} is a choice. Choose it.",
+      "Follow me for more {noun} on {noun}."
+    ]
+  };
+  // Post skeletons: sequences of beat categories. Lessons expand to 2-3 lines.
+  const SKELETONS = [
+    ["hook", "story", "turn", "lesson3", "closer"],
+    ["hook", "turn", "lesson3", "closer"],
+    ["hook", "story", "story", "closer"],
+    ["hook", "lesson3", "brag", "closer"],
+    ["hook", "story", "turn", "closer"],
+    ["hook", "brag", "story", "lesson2", "closer"],
+    ["hook", "story", "lesson3", "brag", "closer"],
+    ["hook", "turn", "story", "closer"]
+  ];
+
+  const LETTERS = ["A", "B", "C", "D", "Seed"];
+
+  function fillTemplate(tmpl, pick, rng) {
+    // Slots: {noun} {noun.pl} {verb} {verb.s|past|ing|pp} {adj} {adv} {propn}
+    // A leading capital letter ({Noun}, {Verb}) capitalizes the result.
+    // {N} = number, {L} = a Series letter.
+    return tmpl.replace(/\{([A-Za-z]+(?:\.[a-z]+)?)\}/g, (m, tok) => {
+      if (tok === "N") return String(2 + Math.floor(rng() * 40));
+      if (tok === "L") return LETTERS[Math.floor(rng() * LETTERS.length)];
+      const capFlag = tok[0] === tok[0].toUpperCase();
+      const out = form(pick, tok.toLowerCase());
+      return capFlag ? cap(out) : out;
+    });
+  }
+
+  // ---------- names / companies / titles ----------
+  function makeIdentity(pick, rng) {
+    const first = cap(form(pick, "propn"));
+    const last = cap(form(pick, "propn"));
+    const suffixes = ["ly", "ify", "r", ".ai", " Labs", " Collective", " Ventures", "wise", "gen"];
+    const company = cap(form(pick, "noun")) + suffixes[Math.floor(rng() * suffixes.length)];
+    const titlePat = [
+      () => `Chief ${cap(form(pick, "noun"))} Officer`,
+      () => `VP of ${cap(form(pick, "verb.ing"))}`,
+      () => `Head of ${cap(form(pick, "noun"))}`,
+      () => `${cap(form(pick, "adj"))} ${cap(form(pick, "noun"))} Evangelist`,
+      () => `Founder & CEO`
+    ];
+    const title = titlePat[Math.floor(rng() * titlePat.length)]();
+    const tagline = [
+      () => `Helping ${form(pick, "noun.pl")} ${form(pick, "verb.base")} their ${form(pick, "noun.pl")}`,
+      () => `${cap(form(pick, "adj"))} thinker | ${cap(form(pick, "noun"))} enthusiast`,
+      () => `Top ${cap(form(pick, "noun"))} Voice`,
+      () => `Ex-${cap(form(pick, "propn"))} | ${cap(form(pick, "noun"))} nerd`
+    ][Math.floor(rng() * 4)]();
+    return { name: `${first} ${last}`, headline: `${title} @ ${company} | ${tagline}`, first };
+  }
+
+  function makeHashtags(pick, rng, n) {
+    const tags = new Set();
+    let guard = 0;
+    while (tags.size < n && guard++ < n * 4) {
+      const w = form(pick, "noun");
+      tags.add("#" + w.split(/[\s-]/).map(cap).join(""));
+    }
+    return [...tags];
+  }
+
+  // ---------- haiku mode ----------
+  function sylOf(pos, row) { const c = col(pos, "syl"); return c == null ? 2 : (row[c] || 2); }
+  function haikuLine(pick, rng, target) {
+    // greedy fill NOUN/ADJ/VERB toward a syllable target
+    const order = ["adj", "noun", "verb"];
+    let out = [], total = 0, guard = 0;
+    while (total < target && guard++ < 40) {
+      const spec = order[Math.floor(rng() * order.length)];
+      const pos = spec === "adj" ? "ADJ" : spec === "verb" ? "VERB" : "NOUN";
+      const row = pick(pos);
+      const s = sylOf(pos, row);
+      if (total + s > target) continue;
+      out.push(row[col(pos, "word")]);
+      total += s;
+    }
+    return out.join(" ");
+  }
+  function buildHaiku(pick, rng) {
+    const lines = [haikuLine(pick, rng, 5), haikuLine(pick, rng, 7), haikuLine(pick, rng, 5)];
+    return cap(lines.join("\n"));
+  }
+
+  // ---------- post assembly ----------
+  function expandBeat(cat, pick, rng) {
+    if (cat === "lesson2" || cat === "lesson3") {
+      const n = cat === "lesson2" ? 2 : 3;
+      const chosen = shuffle(T.lesson.slice(), rng).slice(0, n);
+      return chosen.map(t => fillTemplate(t, pick, rng)).join("\n");
+    }
+    const pool = T[cat];
+    const t = pool[Math.floor(rng() * pool.length)];
+    return fillTemplate(t, pick, rng);
+  }
+  function shuffle(a, rng) {
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+
+  function applyDashes(text, level, rng) {
+    if (!level) return text;
+    const parts = text.split(". ");
+    if (parts.length < 2) return text;
+    const want = level === 3 ? parts.length : Math.min(parts.length - 1, level);
+    for (let k = 0; k < want; k++) parts[k] = parts[k] + " —";
+    return parts.join(level === 3 ? " " : ". ").replace(/—\. /g, "— ").replace(/— ([a-z])/g, (m, c) => "— " + c);
+  }
+
+  function build(seed, dials) {
+    const rng = makeRng(seed);
+    const themeIdx = Math.floor(rng() * THEMES.length);
+    const pick = makePicker(rng, themeIdx, dials.coh);
+    const id = makeIdentity(pick, rng);
+
+    let text;
+    if (dials.haiku) {
+      text = buildHaiku(pick, rng);
+    } else {
+      const skel = SKELETONS[Math.floor(rng() * SKELETONS.length)];
+      const beats = skel.map(cat => expandBeat(cat, pick, rng));
+      // insert brags per humblebrag dial
+      if (dials.brag) {
+        for (let k = 0; k < dials.brag; k++) {
+          const at = 1 + Math.floor(rng() * Math.max(1, beats.length - 1));
+          beats.splice(at, 0, expandBeat("brag", pick, rng));
+        }
+      }
+      text = beats.join("\n\n");
+      text = applyDashes(text, dials.dash, rng);
+      if (dials.tags) text += "\n\n" + makeHashtags(pick, rng, dials.tags).join(" ");
+    }
+
+    const reactions = Math.floor(200 + rng() ** 2 * 40000);
+    const comments = Math.floor(reactions * (0.03 + rng() * 0.12));
+    const reposts = Math.floor(reactions * (0.005 + rng() * 0.03));
+    const cPick = makePicker(rng, themeIdx, dials.coh);
+    const shown = [0, 1].map(() => ({
+      who: `${cap(form(cPick, "propn"))} ${cap(form(cPick, "propn"))}`,
+      head: `${cap(form(cPick, "adj"))} ${cap(form(cPick, "noun"))} | ${cap(form(cPick, "noun"))}`,
+      text: [`Great {noun}! 🙌`, `This. 👏`, `So {adj}.`, `Commenting for reach.`, `Needed this today.`, `Hi ${id.first}, I'd love to connect about your {noun} needs.`][Math.floor(rng() * 6)].replace(/\{(\w+)\}/g, (m, k) => form(cPick, k))
+    }));
+    return { seed, ...id, text, reactions, comments, reposts, shown, age: ["2h", "5h", "1d", "3d", "1w"][Math.floor(rng() * 5)] };
+  }
+
+  // ---------- render ----------
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const fmt = n => n.toLocaleString("en-US");
+  let toastTimer;
+  function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1400); }
+  async function copy(text) { try { await navigator.clipboard.writeText(text); toast("Copied"); } catch { toast("Copy blocked here. Select the text instead."); } }
+
+  function dials() { return { coh: +$("coh").value, brag: +$("brag").value, dash: +$("dash").value, tags: +$("tags").value, haiku: $("haiku").checked }; }
+
+  function renderPost(seed) {
+    const p = build(seed, dials());
+    const art = el("article", "post");
+    art.dataset.seed = seed;
+    const author = el("div", "author");
+    author.append(el("div", "avatar", p.name.split(" ").map(s => s[0]).join("")));
+    const who = el("div", "who");
+    who.append(el("span", "name", p.name), el("span", "headline", p.headline), el("span", "meta", `${p.age} · Edited`));
+    author.append(who);
+    const body = el("div", "body clamped", p.text);
+    const more = el("button", "more", "…see more"); more.type = "button";
+    more.addEventListener("click", () => { body.classList.remove("clamped"); more.hidden = true; });
+    const stats = el("div", "stats", `${fmt(p.reactions)} reactions · ${fmt(p.comments)} comments · ${fmt(p.reposts)} reposts`);
+    const comments = el("div", "comments");
+    p.shown.forEach(c => { const row = el("div", "comment"); row.append(el("span", "c-name", c.who), el("span", "c-head", c.head), el("span", "c-text", c.text)); comments.append(row); });
+    comments.append(el("span", "more-comments", `View ${fmt(Math.max(0, p.comments - 2))} more comments`));
+    const actions = el("div", "actions");
+    const cText = el("button", null, "Copy text"); cText.type = "button"; cText.addEventListener("click", () => copy(build(seed, dials()).text));
+    const cLink = el("button", null, "Copy link"); cLink.type = "button";
+    cLink.addEventListener("click", () => copy(location.href.split("#")[0] + "#p" + seed));
+    actions.append(cText, cLink, el("span", "no", seed));
+    art.append(author, body, more, stats, comments, actions);
+    requestAnimationFrame(() => { if (body.scrollHeight <= body.clientHeight + 2) more.hidden = true; });
+    return art;
+  }
+  function append(n) { for (let i = 0; i < n; i++) feed.append(renderPost(randSeed())); }
+  function rerender() { const seeds = [...feed.children].map(a => a.dataset.seed); feed.replaceChildren(...seeds.map(renderPost)); }
+
+  const cohLabels = ["chaos", "loose", "on-brand", "peak"];
+  const bragLabels = ["none", "subtle", "noticeable", "Bali"];
+  const dashLabels = ["none", "some", "many", "———"];
+  function syncOutputs() { const d = dials(); $("cohOut").textContent = cohLabels[d.coh]; $("bragOut").textContent = bragLabels[d.brag]; $("dashOut").textContent = dashLabels[d.dash]; $("tagsOut").textContent = String(d.tags); }
+
+  ["coh", "brag", "dash", "tags"].forEach(id => $(id).addEventListener("input", () => { syncOutputs(); rerender(); }));
+  $("haiku").addEventListener("change", rerender);
+  $("refresh").addEventListener("click", () => { feed.replaceChildren(); append(3); window.scrollTo({ top: 0 }); });
+
+  function start() {
+    COL = {};
+    for (const pos in LEX.columns) { COL[pos] = {}; LEX.columns[pos].forEach((name, i) => COL[pos][name] = i); }
+    themeNames = Object.keys(LEX.themes);
+    THEMES = themeNames.map(name => LEX.themes[name]);
+    const wc = Object.values(LEX.words).reduce((a, r) => a + r.length, 0);
+    $("count").textContent = `${fmt(wc)} words × 8 skeletons × 99 themes. The number is a joke; the feed doesn't repeat.`;
+    $("loading").textContent = "The feed doesn't end.";
+    syncOutputs();
+    const linked = /^#p([a-z0-9]+)$/i.exec(location.hash);
+    if (linked) feed.append(renderPost(linked[1]));
+    append(linked ? 2 : 3);
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) append(3); }, { rootMargin: "600px" }).observe($("sentinel"));
+    }
+  }
+
+  function fail(msg) { $("count").textContent = ""; $("loading").textContent = msg; }
+  fetch("lexicon.json")
+    .then(r => { if (!r.ok) throw new Error("HTTP " + r.status + " fetching lexicon.json"); return r.json(); })
+    .then(d => { LEX = d; })
+    .catch(e => { fail("Couldn't load the dictionary: " + e.message); throw e; })
+    .then(() => { if (LEX) try { start(); } catch (e) { fail("Dictionary loaded, but rendering failed: " + e.message); } });
+})();
+</script>
