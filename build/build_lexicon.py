@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Build lexicon.json for All Possible LinkedIn Posts.
 
-Same idea as all_possible_haikus.py (WordNet vocabulary, POS buckets, spaCy
-similarity bias), precomputed so a static page can use it without spaCy.
+WordNet vocabulary sorted into POS buckets, with spaCy similarity scores
+precomputed so a static page can use them without spaCy.
 
 Install:
     pip install spacy nltk pronouncing wordfreq lemminflect numpy
@@ -45,7 +45,7 @@ BUSINESS_SEEDS = [
     "motivation", "performance",
 ]
 
-# One random topic per post pulls the words toward it (the haiku script's kigo, for LinkedIn).
+# One random topic per post pulls the words toward it.
 THEMES = [
     "sourdough", "pickleball", "grief", "marathon", "toddler", "dog", "cat",
     "funeral", "wedding", "surfing", "golf", "chess", "gardening", "parenting",
@@ -150,7 +150,7 @@ def unit(v):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--min-zipf", type=float, default=2.5,
-                    help="word-frequency floor (haiku script used 3.0)")
+                    help="wordfreq Zipf frequency floor")
     ap.add_argument("--neighbors", type=int, default=150,
                     help="closest words kept per theme per POS")
     ap.add_argument("--out", default=str(Path(__file__).resolve().parent.parent / "lexicon.json"))

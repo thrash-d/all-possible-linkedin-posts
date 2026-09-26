@@ -3,7 +3,7 @@
 
 Reads linkedin-posts.html (the editable source, which fetches lexicon.json)
 and lexicon.json, and writes linkedin-posts-standalone.html with the dictionary
-embedded and the fetch replaced by an in-page read. No server needed.
+embedded and the fetch replaced by an in-page read.
 
 Run from anywhere:
     python build/make_standalone.py
@@ -28,7 +28,7 @@ def main():
     src = SRC.read_text(encoding="utf-8")
     lex = LEX.read_text(encoding="utf-8")
 
-    # Wrap the artifact-style source in a full HTML document.
+    # The source is a fragment with no <html>, <head>, or <body>.
     head, _, rest = src.partition("</style>")
     page = SKELETON + head + "</style>\n</head>\n<body>\n" + rest + "\n</body>\n</html>\n"
 
