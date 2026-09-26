@@ -258,15 +258,15 @@
       "Nobody prepares you for that kind of {noun}."
     ],
     lesson: [
-      "1️⃣ {Noun} is a {noun}. {Noun} is not.",
-      "2️⃣ {Adj} beats {adj}. Every single time.",
-      "3️⃣ Your {noun} is your {noun}.",
-      "1️⃣ {Verb} slow. {Verb} fast.",
-      "2️⃣ {Noun} is the enemy of {noun}.",
-      "3️⃣ The real {noun} was the {noun.pl} we {verb.past} along the way.",
-      "1️⃣ If you're not {verb.ing}, you're not {verb.ing}.",
-      "2️⃣ {Noun} eats {noun} for breakfast.",
-      "3️⃣ Never {verb} a {noun} that can {verb} itself."
+      "{Noun} is a {noun}. {Noun} is not.",
+      "{Adj} beats {adj}. Every single time.",
+      "Your {noun} is your {noun}.",
+      "{Verb} slow. {Verb} fast.",
+      "{Noun} is the enemy of {noun}.",
+      "The real {noun} was the {noun.pl} we {verb.past} along the way.",
+      "If you're not {verb.ing}, you're not {verb.ing}.",
+      "{Noun} eats {noun} for breakfast.",
+      "Never {verb} a {noun} that can {verb} itself."
     ],
     brag: [
       "(Posting this from {Propn}.)",
@@ -374,7 +374,7 @@
     if (cat === "lesson2" || cat === "lesson3") {
       const n = cat === "lesson2" ? 2 : 3;
       const chosen = shuffle(T.lesson.slice(), rng).slice(0, n);
-      return chosen.map(t => fillTemplate(t, pick, rng)).join("\n");
+      return chosen.map((t, i) => ["1️⃣", "2️⃣", "3️⃣"][i] + " " + fillTemplate(t, pick, rng)).join("\n");
     }
     const pool = T[cat];
     const t = pool[Math.floor(rng() * pool.length)];
@@ -482,7 +482,7 @@
     themeNames = Object.keys(LEX.themes);
     THEMES = themeNames.map(name => LEX.themes[name]);
     const wc = Object.values(LEX.words).reduce((a, r) => a + r.length, 0);
-    $("count").textContent = `${fmt(wc)} words × 8 skeletons × 99 themes. The number is a joke; the feed doesn't repeat.`;
+    $("count").textContent = `${fmt(wc)} words × ${SKELETONS.length} skeletons × ${themeNames.length} themes. The number is a joke; the feed doesn't repeat.`;
     $("loading").textContent = "The feed doesn't end.";
     syncOutputs();
     const linked = /^#p([a-z0-9]+)$/i.exec(location.hash);
