@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>All Possible LinkedIn Posts</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #141414;
+    --surface: #1b1b1c;
+    --line: #2a2a2d;
+    --line-strong: #3a3a3f;
+    --text: #f5f6f8;
+    --text-2: #c9ccd2;
+    --muted: #969eaa;
+    --faint: #5f6570;
+    --accent: #e84430;
+    --accent-ink: #141414;
+    --radius: 6px;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, Menlo, Consolas, monospace;
+  }
+  html, body { background: var(--bg); }
+  body {
+    color: var(--text-2); font-family: var(--sans); font-size: 15px; line-height: 1.55;
+    padding-inline: 16px; padding-block: 32px 64px; font-variant-numeric: tabular-nums;
+  }
+  .wrap { max-width: 600px; margin: 0 auto; display: grid; gap: 24px; }
+  header { display: grid; gap: 6px; }
+  h1 { margin: 0; color: var(--text); font-size: 24px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; }
+  .sub { margin: 0; color: var(--muted); }
+  .count { margin: 0; color: var(--faint); font-family: var(--mono); font-size: 12px; }
+
+  .controls { display: flex; flex-wrap: wrap; align-items: end; gap: 16px 24px; padding-block: 16px; border-block: 1px solid var(--line); }
+  .dial { display: grid; gap: 4px; min-width: 120px; flex: 1 1 120px; }
+  .dial label { color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; gap: 8px; }
+  .dial output { color: var(--text-2); }
+  input[type="range"] { width: 100%; accent-color: var(--accent); }
+  button { font: inherit; cursor: pointer; border-radius: var(--radius); }
+  .primary { background: var(--accent); color: var(--accent-ink); border: 0; padding: 8px 14px; font-weight: 600; font-size: 14px; }
+  .primary:hover { filter: brightness(1.06); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .feed { display: grid; gap: 16px; }
+  .post { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; }
+  .author { display: flex; gap: 12px; align-items: flex-start; }
+  .avatar { flex: 0 0 44px; height: 44px; border-radius: 50%; background: var(--line-strong); color: var(--text); display: grid; place-items: center; font-weight: 600; font-size: 15px; }
+  .who { display: grid; gap: 1px; min-width: 0; }
+  .name { color: var(--text); font-weight: 600; }
+  .headline { color: var(--muted); font-size: 13px; line-height: 1.35; }
+  .meta { color: var(--faint); font-size: 12px; }
+  .body { white-space: pre-line; color: var(--text-2); overflow-wrap: anywhere; }
+  .body.clamped { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .more { justify-self: start; background: none; border: 0; padding: 0; color: var(--muted); font-size: 14px; }
+  .more:hover { color: var(--text); }
+  .stats { color: var(--faint); font-size: 12px; padding-top: 8px; border-top: 1px solid var(--line); }
+  .comments { display: grid; gap: 10px; }
+  .comment { display: grid; gap: 1px; padding-left: 12px; border-left: 1px solid var(--line-strong); }
+  .comment .c-name { color: var(--text); font-size: 13px; font-weight: 500; }
+  .comment .c-head { color: var(--faint); font-size: 12px; }
+  .comment .c-text { color: var(--text-2); font-size: 14px; }
+  .more-comments { color: var(--faint); font-size: 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .actions button { background: none; border: 0; padding: 0; color: var(--muted); font-size: 13px; }
+  .actions button:hover { color: var(--text); }
+  .no { margin-left: auto; color: var(--faint); font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
+  .sentinel { height: 1px; }
+  .loading { color: var(--faint); font-size: 12px; text-align: center; }
+  footer { color: var(--faint); font-size: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+  .mark { color: var(--text); font-weight: 600; }
+  .mark span { color: var(--accent); }
+  .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--line-strong); color: var(--text); padding: 6px 12px; border-radius: var(--radius); font-size: 13px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <h1>All Possible LinkedIn Posts</h1>
+    <p class="sub">Every post, eventually.</p>
+    <p class="count" id="count">Loading the dictionary…</p>
+  </header>
+
+  <section class="controls" aria-label="Post settings">
+    <div class="dial">
+      <label for="coh">Coherence <output id="cohOut" for="coh"></output></label>
+      <input id="coh" type="range" min="0" max="3" step="1" value="2">
+    </div>
+    <div class="dial">
+      <label for="brag">Humblebrag <output id="bragOut" for="brag"></output></label>
+      <input id="brag" type="range" min="0" max="3" step="1" value="1">
+    </div>
+    <div class="dial">
+      <label for="dash">Em dashes <output id="dashOut" for="dash"></output></label>
+      <input id="dash" type="range" min="0" max="3" step="1" value="1">
+    </div>
+    <div class="dial">
+      <label for="tags">Hashtags <output id="tagsOut" for="tags"></output></label>
+      <input id="tags" type="range" min="0" max="8" step="1" value="4">
+    </div>
+    <div class="dial" style="flex:0 0 auto;min-width:0">
+      <label for="haiku">Haiku</label>
+      <input id="haiku" type="checkbox">
+    </div>
+    <button class="primary" id="refresh" type="button">Refresh feed</button>
+  </section>
+
+  <main class="feed" id="feed" aria-live="polite"></main>
+  <div class="sentinel" id="sentinel"></div>
+  <p class="loading" id="loading"></p>
+
+  <footer>
+    <span>Parody. Everyone here is made up. Words are the whole English dictionary.</span>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const feed = $("feed");
+
+  // ---------- word bank ----------
+  // Filled from lexicon.json. Each POS is an array of rows; columns per POS
+  // come from LEX.columns. We index columns by name once loaded.
+  let LEX = null, COL = {}, THEMES = [], themeNames = [];
+
+  function col(pos, name) { return COL[pos][name]; }
+  function wordRow(pos, i) { return LEX.words[pos][i]; }
+
+  // ---------- rng ----------
+  // Every post is one string seed. A string-seeded mulberry32 gives a repeatable
+  // stream, so a copied link rebuilds the exact post regardless of the feed
+  // around it. Inlined so the page has no external dependency.
+  function makeRng(seed) {
+    let h = 1779033703 ^ seed.length;
+    for (let i = 0; i < seed.length; i++) {
+      h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    let a = h >>> 0;
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function randSeed() { return Math.random().toString(36).slice(2, 11); }
+
+  // A picker bound to one post: theme + coherence decide the candidate pool.
+  function makePicker(rng, themeIdx, coherence) {
+    const theme = themeIdx == null ? null : THEMES[themeIdx];
+    // coherence: 0 chaos .. 3 tight. Blend of theme pool, corp score, whole dict.
+    const themeWeight = [0, 0.45, 0.7, 0.9][coherence];
+    const corpBias = [0, 0.15, 0.4, 0.75][coherence];
+    const wildChance = [1, 0.5, 0.25, 0.12][coherence];
+
+    function fromWhole(pos) {
+      const arr = LEX.words[pos];
+      return arr[Math.floor(rng() * arr.length)];
+    }
+    function fromTheme(pos) {
+      if (!theme || !theme[pos] || !theme[pos].length) return fromWhole(pos);
+      const list = theme[pos];
+      return LEX.words[pos][list[Math.floor(rng() * list.length)]];
+    }
+    function fromCorp(pos) {
+      // rejection-sample toward higher corp score
+      const c = col(pos, "corp");
+      if (c == null) return fromWhole(pos);
+      let best = fromWhole(pos);
+      for (let k = 0; k < 3; k++) {
+        const cand = fromWhole(pos);
+        if ((cand[c] || 0) > (best[c] || 0)) best = cand;
+      }
+      return best;
+    }
+    function pick(pos) {
+      const r = rng();
+      let row;
+      if (r < themeWeight) row = fromTheme(pos);
+      else if (r < themeWeight + corpBias) row = fromCorp(pos);
+      else row = fromWhole(pos);
+      // occasional wild word from the whole dictionary regardless
+      if (rng() < wildChance * 0.4) row = fromWhole(pos);
+      return row;
+    }
+    // Draws from a fixed list on this post's stream, so seeds stay reproducible.
+    pick.from = arr => arr[Math.floor(rng() * arr.length)];
+    return pick;
+  }
+
+  // ---------- procedural pools ----------
+  // Built once from the lexicon's scores. THING is common, concrete nouns
+  // (potato, choir); CORP is common, corporate-sounding words (accountability).
+  // Pairing the two is the whole LinkedIn move: "What my potato taught me
+  // about accountability."
+  let THING = [], CORP = {}, CORP_BY_LETTER = {};
+  function buildPools() {
+    const word = pos => col(pos, "word");
+    const common = (pos, min) => r => r[col(pos, "zipf")] >= min && /^[a-z]{3,}$/.test(r[word(pos)]);
+    THING = LEX.words.NOUN.filter(r => r[col("NOUN", "concrete")] && common("NOUN", 3.8)(r));
+    for (const pos of ["NOUN", "ADJ", "VERB"]) {
+      CORP[pos] = LEX.words[pos].filter(r => r[col(pos, "corp")] >= 85 && common(pos, 3.5)(r));
+    }
+    // Looser pool for acronym letters, so rare letters still find a word.
+    CORP_BY_LETTER = {};
+    for (const r of LEX.words.NOUN) {
+      if (r[col("NOUN", "corp")] < 70 || !common("NOUN", 3.2)(r)) continue;
+      (CORP_BY_LETTER[r[word("NOUN")][0]] ||= []).push(r);
+    }
+  }
+
+  // ---------- word forms ----------
+  const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
+  function form(pick, spec) {
+    // spec like "noun", "noun.pl", "verb.ing", "adj", "adv", "propn"
+    // Procedural slots: {thing} {corp} {cadj} {cverb}, with the same variants.
+    const [posKey, variant] = spec.split(".");
+    const posMap = { noun: "NOUN", nouns: "NOUN", verb: "VERB", adj: "ADJ", adv: "ADV", propn: "PROPN",
+                     thing: "NOUN", corp: "NOUN", cadj: "ADJ", cverb: "VERB" };
+    const pools = { thing: THING, corp: CORP.NOUN, cadj: CORP.ADJ, cverb: CORP.VERB };
+    const pos = posMap[posKey];
+    const row = pools[posKey] ? pick.from(pools[posKey]) : pick(pos);
+    if (pos === "NOUN") {
+      if (variant === "pl") return row[col("NOUN", "plural")];
+      return row[col("NOUN", "word")];
+    }
+    if (pos === "VERB") {
+      const map = { s: "s", past: "past", ing: "ing", pp: "pp", base: "word" };
+      return row[col("VERB", map[variant] || "word")];
+    }
+    return row[col(pos, "word")];
+  }
+
+  // ---------- templates ----------
+  // Each beat is a category. A post is a chain of beats. Slots:
+  //   {noun} {noun.pl} {verb} {verb.s} {verb.past} {verb.ing} {verb.pp}
+  //   {adj} {adv} {Noun} (capitalized) etc. {N} = number, {emoji} handled later.
+  //   Procedural: {thing} (everyday object) {corp} (corporate noun) {cadj} {cverb}.
+  const T = {
+    hook: [
+      "Unpopular opinion: {adj} {noun.pl} are killing your {noun}.",
+      "I {verb.past} my best {noun} yesterday.",
+      "{N} years ago I was {verb.ing} {noun.pl} for a living.",
+      "Nobody talks about the {noun} of {verb.ing}.",
+      "Your {noun} is not a {noun}. It's a {noun}.",
+      "I turned down a {adj} {noun} today. Here's why.",
+      "Stop {verb.ing}. Start {verb.ing}.",
+      "This is the hardest post I've ever {verb.pp}.",
+      "My {noun} taught me more about {noun} than any {noun}.",
+      "Most {noun.pl} are {verb.ing} the wrong {noun.pl}.",
+      "I asked {N} {noun.pl} the same question. The answers {verb.past} me.",
+      "The best {noun} I ever received came from a {noun}.",
+      "Humbled to announce that I am now {verb.ing} {noun.pl} full-time.",
+      "Let me tell you about the day a {noun} changed my {noun}.",
+      "What my {thing} taught me about {corp}.",
+      "{Thing} is the new {corp}.",
+      "I stopped {cverb.ing} {corp.pl}. I started {verb.ing} {thing.pl}.",
+      "My {thing} broke this morning. It taught me more about {corp} than my MBA.",
+      "Hot take: {corp} is just {thing.pl} with a budget.",
+      "The best {corp} lesson I ever learned came from a {thing}.",
+      "Everyone wants {corp}. Nobody wants to {verb} the {thing}.",
+      "I fired my best {noun} today.",
+      "I've interviewed {N}00 candidates. Here's the one question that matters.",
+      "Real talk: {cadj} {corp} is a myth.",
+      "Nobody is coming to {verb} your {corp}.",
+      "Hiring managers hate this one {noun}.",
+      "At {N}, I was {verb.ing} {thing.pl} in a garage.",
+      "I almost didn't post this.",
+      "This {thing} is the most {cadj} thing I own.",
+      "Controversial, but: {corp.pl} don't {verb}. People do.",
+      "My daughter asked me what I do for work. I showed her a {thing}.",
+      "I spent {N} hours {verb.ing} {thing.pl} so you don't have to.",
+      "I just got off a call with a {noun} who changed how I see {corp}.",
+      "The {thing} on my desk has outlasted {N} reorgs.",
+      "{Corp} isn't a strategy. It's a {thing}.",
+      "Your {corp} is only as strong as your weakest {thing}.",
+      "Here's what {N} years of {cverb.ing} {corp.pl} taught me.",
+      "Every {noun} I know is quietly {verb.ing}.",
+      "Yesterday a {noun} told me my {corp} was {adj}.",
+      "I used to think {corp} was about {noun.pl}. I was wrong."
+    ],
+    story: [
+      "No {noun}. No {noun}. Just {noun}.",
+      "It {verb.past} for {N} {noun.pl} straight and never once {verb.past}.",
+      "Everyone said the {noun} was {adj}. They were {adv} wrong.",
+      "I {verb.past} {N} {noun.pl} before breakfast.",
+      "The {noun} looked me dead in the eye and {verb.past}.",
+      "We {verb.past} the {noun}, then we {verb.past} the {noun}.",
+      "My {noun} begged me not to {verb} it. I {verb.past} it anyway.",
+      "It cost me a {noun}, a {noun}, and most of my {noun}.",
+      "By {noun} {N}, the whole {noun} was {verb.ing}.",
+      "I {verb.past} in my car for {N} minutes.",
+      "Then the {noun} {verb.past}. And everything {verb.past}.",
+      "I was holding a {thing} when the call came in.",
+      "Our {corp} was falling apart. Our {thing.pl} were fine.",
+      "The board wanted {corp}. I brought them {thing.pl}.",
+      "I spent the weekend {verb.ing} a {thing}. On Monday, I {cverb.past} the whole team.",
+      "We had {N} days, {N} {noun.pl}, and one {thing}.",
+      "My manager said I was too {adj} for {corp}.",
+      "I {verb.past} every {thing} in the office. Nobody noticed.",
+      "The {corp} deck had {N} slides. The {thing} had none.",
+      "Three rejections. Two {noun.pl}. One {thing}.",
+      "I {cverb.past} the {corp} on a napkin. Then I {verb.past} the napkin.",
+      "At 4 a.m. I was {verb.ing} {thing.pl} in the parking lot.",
+      "The intern {verb.past} the {thing}. The VP {verb.past}.",
+      "Nobody on the team knew how to {verb} a {thing}. So I {verb.past} it myself.",
+      "We {cverb.past} for {N} quarters straight.",
+      "I lost the deal. I kept the {thing}.",
+      "The client asked for {corp}. We sent a {thing}.",
+      "It started as a joke about {thing.pl}. Now it's our {corp} framework.",
+      "Somewhere between the {noun} and the {noun}, I {verb.past}."
+    ],
+    turn: [
+      "And that's when it hit me.",
+      "I got {adj}.",
+      "I had to pull over and write this down.",
+      "My hands were {verb.ing}.",
+      "I've never felt more like a {noun}.",
+      "That {noun} taught me everything I know about {noun}.",
+      "It was the most {adj} {noun} of my career.",
+      "Nobody prepares you for that kind of {noun}.",
+      "I sat with that for a long time.",
+      "That's when I realized {corp} was never the point.",
+      "I'm not crying. You're crying.",
+      "The {thing} was right all along.",
+      "Read that again.",
+      "Plot twist: the {thing} was the {corp}.",
+      "Something shifted in me that day.",
+      "I've told this story {N} times and I still get chills.",
+      "That {thing} is framed on my wall now.",
+      "In that moment, I understood {corp}.",
+      "And honestly? It was {adj}.",
+      "I learned more in that hour than in {N} years of {corp}.",
+      "Leadership isn't a title. It's a {thing}.",
+      "My {noun} still brings it up.",
+      "That was {N} years ago. I think about it every day.",
+      "And the {thing} just sat there."
+    ],
+    lesson: [
+      "{Noun} is a {noun}. {Noun} is not.",
+      "{Adj} beats {adj}. Every single time.",
+      "Your {noun} is your {noun}.",
+      "{Verb} slow. {Verb} fast.",
+      "{Noun} is the enemy of {noun}.",
+      "The real {noun} was the {noun.pl} we {verb.past} along the way.",
+      "If you're not {verb.ing}, you're not {verb.ing}.",
+      "{Noun} eats {noun} for breakfast.",
+      "Never {verb} a {noun} that can {verb} itself.",
+      "{Corp} is a {thing}, not a {noun}.",
+      "Treat every {thing} like a {corp} opportunity.",
+      "{Cadj} teams {verb} {thing.pl}.",
+      "Protect your {corp} like it's your last {thing}.",
+      "The {thing} doesn't care about your {corp}.",
+      "{Cverb} first. {Verb} later.",
+      "Hire for {corp}. Train for {thing.pl}.",
+      "Your network is your {thing}.",
+      "{Corp} without {noun} is just a {thing}.",
+      "Be the {thing} you want to see in the {corp}.",
+      "Small {thing.pl}, big {corp}.",
+      "Nobody remembers your {corp}. They remember your {thing}.",
+      "Done is better than {adj}.",
+      "Say no to {corp}. Say yes to {thing.pl}.",
+      "Culture eats {corp} for breakfast."
+    ],
+    brag: [
+      "(Posting this from {Propn}.)",
+      "(We just {verb.past} our Series {L}, but that's not the point.)",
+      "(Not a humblebrag. Just {adj}.)",
+      "Sent from my {noun} overlooking the {noun}.",
+      "(I've been asked not to share our {noun}, but it's up.)",
+      "My keynote in {Propn} went {adv} well, by the way.",
+      "(Writing this from the lounge in {Propn}.)",
+      "(My {thing} is custom, but that's another post.)",
+      "(Yes, we're hiring. No, I won't say how much we raised.)",
+      "(Shoutout to my {N}k followers. You're {adj}.)",
+      "(Just got back from speaking at the {Propn} {Corp} Summit.)",
+      "(Our {corp} numbers are up {N}0%. Anyway.)",
+      "(Photo is me on stage. Didn't even notice it was being taken.)",
+      "(Still getting used to the corner office.)",
+      "(Forbes called. I let it go to voicemail.)",
+      "(Took this call from my {thing} in {Propn}.)",
+      "(My book on {corp} drops next month, but this isn't about that.)",
+      "(Grateful for the {N}-figure exit, but the real reward was the {thing.pl}.)"
+    ],
+    closer: [
+      "Agree?",
+      "Thoughts?",
+      "What would you add?",
+      "Repost if this {verb.past} with you. ♻️",
+      "Let that {noun} sink in.",
+      "Who needed to hear this today?",
+      "{Noun} is a choice. Choose it.",
+      "Follow me for more {noun} on {noun}.",
+      "Tag someone who needs this.",
+      "Drop a 🙌 if you agree.",
+      "What's your {thing}?",
+      "Save this for your next {corp} meeting.",
+      "Comment \"{Corp}\" and I'll send you the framework.",
+      "Am I wrong?",
+      "Be honest: are you {verb.ing} enough {thing.pl}?",
+      "What did your first {thing} teach you?",
+      "Share this with your team.",
+      "Let's normalize {verb.ing} {thing.pl} at work.",
+      "Your {corp} will thank you.",
+      "Still {verb.ing}. Still {adj}. Still here.",
+      "Link in the comments. 👇",
+      "Follow for daily {corp}.",
+      "The {thing} is waiting. What will you do?",
+      "Repost to help one {noun} today. ♻️",
+      "It's not about the {thing}. It never was.",
+      "{Corp} is a team sport. Who's on yours?",
+      "P.S. I read every comment.",
+      "Onward. 🚀",
+      "Grateful. Humbled. {Adj}."
+    ],
+    // One line per item in the "N things X taught me" listicle.
+    list: [
+      "{Corp} is a {thing}.",
+      "Nobody cares about your {noun}.",
+      "{Verb} early. {Verb} often.",
+      "The best {corp.pl} feel like {thing.pl}.",
+      "You can't {cverb} a {thing}.",
+      "{Adj} is a feature, not a bug.",
+      "Every {thing} has a {corp} story.",
+      "Rest is {corp}.",
+      "Your {noun.pl} are watching.",
+      "{Thing.pl} don't {verb}. Neither should you.",
+      "Consistency beats {corp}.",
+      "Show up, even when the {thing} doesn't.",
+      "{Corp} is earned, not {verb.pp}.",
+      "Say thank you to the {noun}.",
+      "The {thing} is always right.",
+      "{Cverb} the process.",
+      "Fail {adv}. Learn {adv}.",
+      "There is no {corp} without {thing.pl}."
+    ]
+  };
+  // Post skeletons: sequences of beat categories. Lessons expand to 2-3 lines.
+  const SKELETONS = [
+    ["hook", "story", "turn", "lesson3", "closer"],
+    ["hook", "turn", "lesson3", "closer"],
+    ["hook", "story", "story", "closer"],
+    ["hook", "lesson3", "brag", "closer"],
+    ["hook", "story", "turn", "closer"],
+    ["hook", "brag", "story", "lesson2", "closer"],
+    ["hook", "story", "lesson3", "brag", "closer"],
+    ["hook", "turn", "story", "closer"],
+    ["hook", "story", "story", "turn", "lesson3", "closer"],
+    ["hook", "lesson2", "story", "closer"],
+    ["hook", "story", "brag", "turn", "closer"],
+    ["hook", "turn", "lesson3", "brag", "closer"]
+  ];
+
+  const LETTERS = ["A", "B", "C", "D", "E", "Seed", "Pre-seed"];
+  const one = (arr, rng) => arr[Math.floor(rng() * arr.length)];
+
+  function fillTemplate(tmpl, pick, rng) {
+    // Slots: {noun} {noun.pl} {verb} {verb.s|past|ing|pp} {adj} {adv} {propn}
+    // A leading capital letter ({Noun}, {Verb}) capitalizes the result.
+    // {N} = number, {L} = a Series letter, {title} and {company} = made-up ones.
+    return tmpl.replace(/\{([A-Za-z]+(?:\.[a-z]+)?)\}/g, (m, tok) => {
+      if (tok === "N") return String(2 + Math.floor(rng() * 40));
+      if (tok === "L") return one(LETTERS, rng);
+      if (tok === "title") return makeTitle(pick, rng);
+      if (tok === "company") return makeCompany(pick, rng);
+      const capFlag = tok[0] === tok[0].toUpperCase();
+      const out = form(pick, tok.toLowerCase());
+      return capFlag ? cap(out) : out;
+    }).replace(/([Aa]) (?=[aeiou])/g, "$1n ");
+  }
+
+  // ---------- post formats ----------
+  // Each returns paragraphs; build() adds brags, dashes, and tags to any of them.
+  const f = (pick, rng) => t => fillTemplate(t, pick, rng);
+  const FORMATS = {
+    story: (pick, rng) => one(SKELETONS, rng).map(cat => expandBeat(cat, pick, rng)),
+
+    announce: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one([
+          "I'm happy to share that I'm starting a new position as {title} at {company}!",
+          "Some personal news: after {N} years, I'm joining {company} as {title}. 🎉",
+          "Excited to announce I've accepted a role as {title} at {company}.",
+          "New chapter. New {thing}. New {corp}. I'm now {title} at {company}."
+        ], rng)),
+        x(one([
+          "{N} years ago I was {verb.ing} {thing.pl} in my garage. Today I'm {cverb.ing} {corp} at scale.",
+          "When I started, I didn't know what {corp} meant. I just knew I loved {thing.pl}.",
+          "This role is the result of {N} rejections, {N} {noun.pl}, and one very patient {thing}."
+        ], rng)),
+        x(one([
+          "Huge thanks to my {noun}, my {thing}, and everyone at {company} who believed in my {corp}.",
+          "Grateful to the {noun.pl} who taught me to {cverb} before I could {verb}.",
+          "To my old team: keep {verb.ing} those {thing.pl}."
+        ], rng)),
+        x(one(["Let's go! 🚀", "Onward. 🙏", "Day one. Again.", "More soon. {Corp} awaits."], rng))
+      ];
+    },
+
+    rejected: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one([
+          "{N} years ago, {company} rejected me for an entry-level {noun} role.",
+          "{N} years ago, a recruiter told me I wasn't {cadj} enough for {corp}.",
+          "My first {N} job applications came back with the same answer: no."
+        ], rng)),
+        x(one([
+          "They said my {thing} was too {adj}.",
+          "The feedback was one line: \"Needs more {corp}.\"",
+          "I went home and {verb.past} a {thing} until 3 a.m."
+        ], rng)),
+        x(one([
+          "Last week, I became their CEO.",
+          "Today, I {verb.past} their company.",
+          "This morning, they asked me to keynote their {corp} offsite.",
+          "Now they're a client."
+        ], rng)),
+        x(one(["Rejection isn't the end. It's {corp}.", "Every no is a {thing} in disguise.", "Never let a {noun} define your {corp}."], rng)),
+        x(one(T.closer, rng))
+      ];
+    },
+
+    poll: (pick, rng) => {
+      const x = f(pick, rng);
+      const opts = ["{Thing.pl}", "{Corp}", "{Cadj} {corp.pl}", "{Verb.ing} {noun.pl}"].map(x);
+      const w = opts.map(() => rng() ** 2 + 0.05);
+      const sum = w.reduce((a, b) => a + b, 0);
+      const pct = w.map(v => Math.round(v / sum * 100));
+      pct[pct.indexOf(Math.max(...pct))] += 100 - pct.reduce((a, b) => a + b, 0);
+      const rows = opts.map((o, i) => {
+        const filled = Math.round(pct[i] / 10);
+        return "▓".repeat(filled) + "░".repeat(10 - filled) + ` ${pct[i]}% ${o}`;
+      });
+      return [
+        x(one([
+          "Quick poll: what matters most for {corp} this year?",
+          "Settle a debate for me. What actually drives {corp}?",
+          "Honest question for my network: what's the secret to {cadj} teams?"
+        ], rng)),
+        rows.join("\n"),
+        `${fmt(200 + Math.floor(rng() * 9000))} votes · ${1 + Math.floor(rng() * 6)}d left`,
+        x(one(["Vote and tell me why in the comments. 👇", "Surprised by these results? I'm not.", "The {thing.pl} are winning and honestly? Same."], rng))
+      ];
+    },
+
+    listicle: (pick, rng) => {
+      const x = f(pick, rng);
+      const n = 4 + Math.floor(rng() * 4);
+      const items = shuffle(T.list.slice(), rng).slice(0, n).map(t => "→ " + x(t));
+      return [
+        x(one([
+          `${n} things my {thing} taught me about {corp}:`,
+          `${n} {corp} lessons nobody teaches you:`,
+          `I've {cverb.past} for {N} years. Here are ${n} truths:`,
+          `${n} habits of highly {cadj} {noun.pl}:`
+        ], rng)),
+        items.join("\n"),
+        x(one(["Which one hits hardest?", "Save this. You'll need it.", "What would you add? #{N} might surprise you."], rng))
+      ];
+    },
+
+    openToWork: (pick, rng) => {
+      const x = f(pick, rng);
+      const skills = [0, 1, 2, 3].map(() => x(one(["{Corp}", "{Thing} {verb.ing}", "{Cadj} {corp}", "{Cverb.ing} {noun.pl}"], rng)));
+      return [
+        "#OpenToWork 🟢",
+        x(one([
+          "After {N} amazing years at {company}, my role was impacted by a {corp} restructuring.",
+          "Last Tuesday, {company} decided to {cverb} without me.",
+          "I was part of this week's {corp} realignment at {company}."
+        ], rng)),
+        x("I'm looking for my next {title} role where I can {cverb} {corp.pl} and {verb} {thing.pl}."),
+        "Skills: " + skills.join(" · "),
+        x(one(["Any {noun.pl} or reposts appreciated. ♻️", "If your team needs someone who can {verb} a {thing} under pressure, DM me.", "Still {adj}. Still {verb.ing}."], rng))
+      ];
+    },
+
+    intern: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one([
+          "My intern asked me: \"How do you {cverb} {corp.pl}?\"",
+          "An intern stopped me in the hallway today. \"What's the secret to {corp}?\"",
+          "\"Why is {corp} so hard?\" my intern asked."
+        ], rng)),
+        x("I handed them a {thing}."),
+        "\"What's this for?\"",
+        x("\"{Corp},\" I said."),
+        x(one(["They're a VP now.", "They cried. I cried. The {thing} didn't.", "They {verb.past} it on the spot. Best hire I ever made.", "They quit the next day to start a {thing} company."], rng)),
+        x(one(T.closer, rng))
+      ];
+    },
+
+    broetry: (pick, rng) => {
+      // One sentence per line, the way the pros do it.
+      const beats = ["hook", "story", "story", "turn", "lesson", "closer"].map(c => fillTemplate(one(T[c], rng), pick, rng));
+      return beats.flatMap(b => b.split(/(?<=[.!?]) /));
+    },
+
+    framework: (pick, rng) => {
+      const x = f(pick, rng);
+      const short = THING.filter(r => { const w = r[col("NOUN", "word")]; return w.length >= 4 && w.length <= 6; });
+      const word = one(short, rng)[col("NOUN", "word")].toUpperCase();
+      const acr = [...word].join(".") + ".";
+      const lines = [...word].map(ch => {
+        const pool = CORP_BY_LETTER[ch.toLowerCase()] || CORP.NOUN;
+        return `${ch}: ${cap(one(pool, rng)[col("NOUN", "word")])}`;
+      });
+      return [
+        x(one([
+          `After {N} years of {cverb.ing} {corp.pl}, I built the ${acr} Framework™.`,
+          `Introducing the ${acr} method for {cadj} {corp}.`,
+          `Every {corp} win I've had comes down to ${acr}`
+        ], rng)),
+        lines.join("\n"),
+        x(one(["I've used it with {N} Fortune 500 {noun.pl}.", "It's never failed me. Not once.", "Simple. Not easy."], rng)),
+        `Comment "${word}" and I'll DM you the template.`
+      ];
+    }
+  };
+  // The classic story format carries most of the feed; each other format is one share.
+  const FORMAT_DRAW = Object.keys(FORMATS).concat(Array(4).fill("story"));
+
+  // ---------- names / companies / titles ----------
+  const SUFFIXES = ["ly", "ify", "r", ".ai", " Labs", " Collective", " Ventures", "wise", "gen", "hub", "io",
+    " Partners", " Group", "flow", "stack", " & Co", "ster", " Global", " Dynamics", "base"];
+  function makeCompany(pick, rng) {
+    const w = one(["noun", "thing", "corp"], rng);
+    return cap(form(pick, w)) + one(SUFFIXES, rng);
+  }
+  function makeTitle(pick, rng) {
+    return one([
+      () => `Chief ${cap(form(pick, "noun"))} Officer`,
+      () => `Chief ${cap(form(pick, "corp"))} Officer`,
+      () => `VP of ${cap(form(pick, "verb.ing"))}`,
+      () => `Head of ${cap(form(pick, "noun"))}`,
+      () => `Head of ${cap(form(pick, "corp"))} & ${cap(form(pick, "thing.pl"))}`,
+      () => `${cap(form(pick, "adj"))} ${cap(form(pick, "noun"))} Evangelist`,
+      () => `Senior ${cap(form(pick, "thing"))} Strategist`,
+      () => `${cap(form(pick, "corp"))} Ninja`,
+      () => `Director of ${cap(form(pick, "cadj"))} ${cap(form(pick, "corp"))}`,
+      () => `Global ${cap(form(pick, "thing"))} Lead`,
+      () => `Fractional ${cap(form(pick, "corp"))} Officer`,
+      () => `${cap(form(pick, "thing"))} Whisperer`,
+      () => `Founder & CEO`,
+      () => `Serial Entrepreneur`
+    ], rng)();
+  }
+  function makeIdentity(pick, rng) {
+    const first = cap(form(pick, "propn"));
+    const last = cap(form(pick, "propn"));
+    const company = makeCompany(pick, rng);
+    const title = makeTitle(pick, rng);
+    const tagline = one([
+      () => `Helping ${form(pick, "noun.pl")} ${form(pick, "verb.base")} their ${form(pick, "noun.pl")}`,
+      () => `${cap(form(pick, "adj"))} thinker | ${cap(form(pick, "noun"))} enthusiast`,
+      () => `Top ${cap(form(pick, "noun"))} Voice`,
+      () => `Ex-${cap(form(pick, "propn"))} | ${cap(form(pick, "noun"))} nerd`,
+      () => `${cap(form(pick, "corp"))} • ${cap(form(pick, "corp"))} • ${cap(form(pick, "thing.pl"))}`,
+      () => `I help ${form(pick, "cadj")} leaders ${form(pick, "cverb")} their ${form(pick, "corp")}`,
+      () => `${fmt(1 + Math.floor(rng() * 90))}K followers | Keynote speaker on ${form(pick, "corp")}`,
+      () => `Dad. ${cap(form(pick, "thing"))} collector. ${cap(form(pick, "corp"))} obsessive.`,
+      () => `Building the future of ${form(pick, "thing.pl")}`,
+      () => `${cap(form(pick, "thing"))}-first ${form(pick, "corp")} | Opinions my own`,
+      () => `Author of "The ${cap(form(pick, "thing"))} Mindset"`,
+      () => `Turning ${form(pick, "thing.pl")} into ${form(pick, "corp")}`
+    ], rng)();
+    return { name: `${first} ${last}`, headline: `${title} @ ${company} | ${tagline}`, first };
+  }
+
+  function makeHashtags(pick, rng, n) {
+    const tags = new Set();
+    let guard = 0;
+    while (tags.size < n && guard++ < n * 4) {
+      const w = form(pick, "noun");
+      tags.add("#" + w.split(/[\s-]/).map(cap).join(""));
+    }
+    return [...tags];
+  }
+
+  // ---------- haiku mode ----------
+  function sylOf(pos, row) { const c = col(pos, "syl"); return c == null ? 2 : (row[c] || 2); }
+  function haikuLine(pick, rng, target) {
+    // greedy fill NOUN/ADJ/VERB toward a syllable target
+    const order = ["adj", "noun", "verb"];
+    let out = [], total = 0, guard = 0;
+    while (total < target && guard++ < 40) {
+      const spec = order[Math.floor(rng() * order.length)];
+      const pos = spec === "adj" ? "ADJ" : spec === "verb" ? "VERB" : "NOUN";
+      const row = pick(pos);
+      const s = sylOf(pos, row);
+      if (total + s > target) continue;
+      out.push(row[col(pos, "word")]);
+      total += s;
+    }
+    return out.join(" ");
+  }
+  function buildHaiku(pick, rng) {
+    const lines = [haikuLine(pick, rng, 5), haikuLine(pick, rng, 7), haikuLine(pick, rng, 5)];
+    return cap(lines.join("\n"));
+  }
+
+  // ---------- post assembly ----------
+  function expandBeat(cat, pick, rng) {
+    if (cat === "lesson2" || cat === "lesson3") {
+      const n = cat === "lesson2" ? 2 : 3;
+      const chosen = shuffle(T.lesson.slice(), rng).slice(0, n);
+      return chosen.map((t, i) => ["1️⃣", "2️⃣", "3️⃣"][i] + " " + fillTemplate(t, pick, rng)).join("\n");
+    }
+    const pool = T[cat];
+    const t = pool[Math.floor(rng() * pool.length)];
+    return fillTemplate(t, pick, rng);
+  }
+  function shuffle(a, rng) {
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+
+  function applyDashes(text, level, rng) {
+    if (!level) return text;
+    const parts = text.split(". ");
+    if (parts.length < 2) return text;
+    const want = level === 3 ? parts.length : Math.min(parts.length - 1, level);
+    for (let k = 0; k < want; k++) parts[k] = parts[k] + " —";
+    return parts.join(level === 3 ? " " : ". ").replace(/—\. /g, "— ").replace(/— ([a-z])/g, (m, c) => "— " + c);
+  }
+
+  // @first is the poster's first name.
+  const COMMENTS = [
+    "Great {noun}! 🙌", "This. 👏", "So {adj}.", "Commenting for reach.", "Needed this today.",
+    "Hi @first, I'd love to connect about your {noun} needs.",
+    "Congrats @first! Well deserved. 🎉", "Love this, @first.", "Couldn't agree more.",
+    "This is the {corp} content I'm here for.", "Saving this for my next {corp} offsite.",
+    "My {thing} and I both needed this.", "Wow. Just wow.", "Great insight! Thanks for sharing.",
+    "{Corp} is so underrated.", "100% this.", "Following for more.", "Sharing with my team. 🙏",
+    "Brb, {verb.ing} my {thing.pl}.", "Insightful! 💡", "I felt this in my {thing}.",
+    "Interested", "Interested 👀", "Thanks for the reminder that {corp} starts with us.",
+    "So true. {Corp} is a journey, not a {thing}.", "Every leader should read this.",
+    "Commenting to boost. Great post @first!", "Wait, is this about {company}?",
+    "The {thing} part got me. 😂", "I've been saying this for {N} years.",
+    "Hi @first, quick question about {cadj} {corp}. Mind if I DM you?",
+    "Agree. Though I'd add {thing.pl}.", "Needed this before my 4 p.m. {corp} sync.",
+    "This deserves more reactions.", "Legend. 🐐", "Bookmarking. 🔖",
+    "{Adj} take, @first.", "Came for the {thing}. Stayed for the {corp}.",
+    "Hi @first, I help {noun.pl} {cverb} their {corp}. Open to a quick call?",
+    "Reposting. ♻️"
+  ];
+
+  function build(seed, dials) {
+    const rng = makeRng(seed);
+    const themeIdx = Math.floor(rng() * THEMES.length);
+    const pick = makePicker(rng, themeIdx, dials.coh);
+    const id = makeIdentity(pick, rng);
+
+    let text;
+    if (dials.haiku) {
+      text = buildHaiku(pick, rng);
+    } else {
+      const beats = FORMATS[one(FORMAT_DRAW, rng)](pick, rng);
+      // insert brags per humblebrag dial
+      if (dials.brag) {
+        for (let k = 0; k < dials.brag; k++) {
+          const at = 1 + Math.floor(rng() * Math.max(1, beats.length - 1));
+          beats.splice(at, 0, expandBeat("brag", pick, rng));
+        }
+      }
+      text = beats.join("\n\n");
+      text = applyDashes(text, dials.dash, rng);
+      if (dials.tags) text += "\n\n" + makeHashtags(pick, rng, dials.tags).join(" ");
+    }
+
+    const reactions = Math.floor(200 + rng() ** 2 * 40000);
+    const comments = Math.floor(reactions * (0.03 + rng() * 0.12));
+    const reposts = Math.floor(reactions * (0.005 + rng() * 0.03));
+    const cPick = makePicker(rng, themeIdx, dials.coh);
+    const shown = [0, 1].map(() => ({
+      who: `${cap(form(cPick, "propn"))} ${cap(form(cPick, "propn"))}`,
+      head: `${cap(form(cPick, "adj"))} ${cap(form(cPick, "noun"))} | ${cap(form(cPick, "noun"))}`,
+      text: fillTemplate(one(COMMENTS, rng).replace("@first", id.first), cPick, rng)
+    }));
+    return { seed, ...id, text, reactions, comments, reposts, shown, age: ["2h", "5h", "1d", "3d", "1w"][Math.floor(rng() * 5)] };
+  }
+
+  // ---------- render ----------
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const fmt = n => n.toLocaleString("en-US");
+  let toastTimer;
+  function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1400); }
+  async function copy(text) { try { await navigator.clipboard.writeText(text); toast("Copied"); } catch { toast("Copy blocked here. Select the text instead."); } }
+
+  function dials() { return { coh: +$("coh").value, brag: +$("brag").value, dash: +$("dash").value, tags: +$("tags").value, haiku: $("haiku").checked }; }
+
+  function renderPost(seed) {
+    const p = build(seed, dials());
+    const art = el("article", "post");
+    art.dataset.seed = seed;
+    const author = el("div", "author");
+    author.append(el("div", "avatar", p.name.split(" ").map(s => s[0]).join("")));
+    const who = el("div", "who");
+    who.append(el("span", "name", p.name), el("span", "headline", p.headline), el("span", "meta", `${p.age} · Edited`));
+    author.append(who);
+    const body = el("div", "body clamped", p.text);
+    const more = el("button", "more", "…see more"); more.type = "button";
+    more.addEventListener("click", () => { body.classList.remove("clamped"); more.hidden = true; });
+    const stats = el("div", "stats", `${fmt(p.reactions)} reactions · ${fmt(p.comments)} comments · ${fmt(p.reposts)} reposts`);
+    const comments = el("div", "comments");
+    p.shown.forEach(c => { const row = el("div", "comment"); row.append(el("span", "c-name", c.who), el("span", "c-head", c.head), el("span", "c-text", c.text)); comments.append(row); });
+    comments.append(el("span", "more-comments", `View ${fmt(Math.max(0, p.comments - 2))} more comments`));
+    const actions = el("div", "actions");
+    const cText = el("button", null, "Copy text"); cText.type = "button"; cText.addEventListener("click", () => copy(build(seed, dials()).text));
+    const cLink = el("button", null, "Copy link"); cLink.type = "button";
+    cLink.addEventListener("click", () => copy(location.href.split("#")[0] + "#p" + seed));
+    actions.append(cText, cLink, el("span", "no", seed));
+    art.append(author, body, more, stats, comments, actions);
+    requestAnimationFrame(() => { if (body.scrollHeight <= body.clientHeight + 2) more.hidden = true; });
+    return art;
+  }
+  function append(n) { for (let i = 0; i < n; i++) feed.append(renderPost(randSeed())); }
+  function rerender() { const seeds = [...feed.children].map(a => a.dataset.seed); feed.replaceChildren(...seeds.map(renderPost)); }
+
+  const cohLabels = ["chaos", "loose", "on-brand", "peak"];
+  const bragLabels = ["none", "subtle", "noticeable", "Bali"];
+  const dashLabels = ["none", "some", "many", "———"];
+  function syncOutputs() { const d = dials(); $("cohOut").textContent = cohLabels[d.coh]; $("bragOut").textContent = bragLabels[d.brag]; $("dashOut").textContent = dashLabels[d.dash]; $("tagsOut").textContent = String(d.tags); }
+
+  ["coh", "brag", "dash", "tags"].forEach(id => $(id).addEventListener("input", () => { syncOutputs(); rerender(); }));
+  $("haiku").addEventListener("change", rerender);
+  $("refresh").addEventListener("click", () => { feed.replaceChildren(); append(3); window.scrollTo({ top: 0 }); });
+
+  function start() {
+    COL = {};
+    for (const pos in LEX.columns) { COL[pos] = {}; LEX.columns[pos].forEach((name, i) => COL[pos][name] = i); }
+    themeNames = Object.keys(LEX.themes);
+    THEMES = themeNames.map(name => LEX.themes[name]);
+    buildPools();
+    const wc = Object.values(LEX.words).reduce((a, r) => a + r.length, 0);
+    const shapes = SKELETONS.length + Object.keys(FORMATS).length - 1;
+    $("count").textContent = `${fmt(wc)} words × ${shapes} post shapes × ${themeNames.length} themes. The number is a joke; the feed doesn't repeat.`;
+    $("loading").textContent = "The feed doesn't end.";
+    syncOutputs();
+    const linked = /^#p([a-z0-9]+)$/i.exec(location.hash);
+    if (linked) feed.append(renderPost(linked[1]));
+    append(linked ? 2 : 3);
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) append(3); }, { rootMargin: "600px" }).observe($("sentinel"));
+    }
+  }
+
+  function fail(msg) { $("count").textContent = ""; $("loading").textContent = msg; }
+  fetch("lexicon.json")
+    .then(r => { if (!r.ok) throw new Error("HTTP " + r.status + " fetching lexicon.json"); return r.json(); })
+    .then(d => { LEX = d; start(); })
+    .catch(e => fail("Couldn't build the feed: " + e.message));
+})();
+</script>
+
+</body>
+</html>

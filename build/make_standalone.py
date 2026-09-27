@@ -5,6 +5,10 @@ Reads linkedin-posts.html (the editable source, which fetches lexicon.json)
 and lexicon.json, and writes linkedin-posts-standalone.html with the dictionary
 embedded and the fetch replaced by an in-page read.
 
+Also writes index.html, the source wrapped in a full HTML document with the
+fetch kept. That's the GitHub Pages copy: it loads lexicon.json separately,
+which Pages serves gzipped, instead of shipping the whole dictionary inline.
+
 Run from anywhere:
     python build/make_standalone.py
 """
@@ -17,6 +21,7 @@ ROOT = HERE.parent
 SRC = ROOT / "linkedin-posts.html"
 LEX = ROOT / "lexicon.json"
 OUT = ROOT / "linkedin-posts-standalone.html"
+WEB = ROOT / "index.html"
 
 SKELETON = (
     '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
@@ -31,6 +36,9 @@ def main():
     # The source is a fragment with no <html>, <head>, or <body>.
     head, _, rest = src.partition("</style>")
     page = SKELETON + head + "</style>\n</head>\n<body>\n" + rest + "\n</body>\n</html>\n"
+
+    WEB.write_text(page, encoding="utf-8")
+    print(f"Wrote {WEB.name} ({len(page) / 1e3:.0f} KB)")
 
     # Escape so the JSON can't terminate the <script> block or break line parsing.
     safe = lex.replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
