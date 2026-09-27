@@ -13,8 +13,7 @@
     --accent: #e84430;
     --accent-ink: #141414;
     --radius: 6px;
-    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-    --mono: ui-monospace, Menlo, Consolas, monospace;
+    --sans: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Fira Sans", Ubuntu, Oxygen, "Oxygen Sans", Cantarell, "Droid Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Lucida Grande", Helvetica, Arial, sans-serif;
   }
   html, body { background: var(--bg); }
   body {
@@ -25,7 +24,7 @@
   header { display: grid; gap: 6px; }
   h1 { margin: 0; color: var(--text); font-size: 24px; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; }
   .sub { margin: 0; color: var(--muted); }
-  .count { margin: 0; color: var(--faint); font-family: var(--mono); font-size: 12px; }
+  .count { margin: 0; color: var(--faint); font-size: 12px; }
 
   .controls { display: flex; flex-wrap: wrap; align-items: end; gap: 16px 24px; padding-block: 16px; border-block: 1px solid var(--line); }
   .dial { display: grid; gap: 4px; min-width: 120px; flex: 1 1 120px; }
@@ -59,7 +58,7 @@
   .actions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
   .actions button { background: none; border: 0; padding: 0; color: var(--muted); font-size: 13px; }
   .actions button:hover { color: var(--text); }
-  .no { margin-left: auto; color: var(--faint); font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
+  .no { margin-left: auto; color: var(--faint); font-size: 11px; overflow-wrap: anywhere; }
   .sentinel { height: 1px; }
   .loading { color: var(--faint); font-size: 12px; text-align: center; }
   footer { color: var(--faint); font-size: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
