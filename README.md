@@ -66,7 +66,7 @@ python build/make_standalone.py
 
 1. Pick a random seed. A shared link stores this seed.
 2. From the seed, pick one of 99 themes. The Coherence dial sets how hard the theme pulls.
-3. Pick a post shape. Most posts are a story skeleton, a chain of beats: hook, story, turn, lessons, brag, closer. The rest are job announcements, rejected-then-CEO stories, polls, listicles, open-to-work posts, intern parables, one-line-per-sentence posts, and acronym frameworks.
+3. Pick a post shape. Most posts are a story skeleton, a chain of beats: hook, story, turn, lessons, brag, closer. The rest are job announcements, rejected-then-CEO stories, polls, listicles, open-to-work posts, intern parables, one-line-per-sentence posts, acronym frameworks, hot takes, work anniversaries, hiring posts, stop/start lists, carousels, 4 a.m. routines, what-my-kid-said stories, conference recaps, then-vs-now posts, certifications, I-fired-my-best-employee confessions, comment-for-the-PDF bait, team shout-outs, I-asked-AI posts, résumé tips, promotions, follower milestones, crying-CEO layoff posts, and screenshotted DMs.
 4. Fill each beat's sentence templates with words from the dictionary, in the right grammatical forms (plurals, tenses). The Coherence dial biases the picks toward the theme and toward business. Some slots draw from two pools built from the dictionary's scores: everyday objects and corporate nouns. Pairing them gives lines like "What my potato taught me about accountability." A framework's acronym is an everyday word, with each letter spelled out by a corporate noun.
 5. Generate a fake name, title, company, and hashtags the same way.
 
