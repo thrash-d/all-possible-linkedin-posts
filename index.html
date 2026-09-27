@@ -284,7 +284,17 @@
       "Here's what {N} years of {cverb.ing} {corp.pl} taught me.",
       "Every {noun} I know is quietly {verb.ing}.",
       "Yesterday a {noun} told me my {corp} was {adj}.",
-      "I used to think {corp} was about {noun.pl}. I was wrong."
+      "I used to think {corp} was about {noun.pl}. I was wrong.",
+      "I cried in a {thing} store today.",
+      "{N} years. {N} pivots. One {thing}.",
+      "Nobody tells you this about {corp}:",
+      "I was {verb.pp} from my first job for {verb.ing} a {thing}.",
+      "Stop asking for {corp}. Start asking for {thing.pl}.",
+      "The most {cadj} person I know doesn't own a {thing}.",
+      "I turned my {thing} into a {N}-figure business.",
+      "Every morning at 4 a.m., I {verb} a {thing}.",
+      "What {Propn} taught me about {corp}.",
+      "Be honest. When was the last time you {verb.past} a {thing}?"
     ],
     story: [
       "No {noun}. No {noun}. Just {noun}.",
@@ -315,7 +325,12 @@
       "I lost the deal. I kept the {thing}.",
       "The client asked for {corp}. We sent a {thing}.",
       "It started as a joke about {thing.pl}. Now it's our {corp} framework.",
-      "Somewhere between the {noun} and the {noun}, I {verb.past}."
+      "Somewhere between the {noun} and the {noun}, I {verb.past}.",
+      "The meeting was supposed to be about {corp}. It became about a {thing}.",
+      "I was {N} minutes late. The {thing} was {N} hours late.",
+      "My co-founder {verb.past} the {thing} on day one.",
+      "We pitched {N} investors. {N} of them asked about the {thing}.",
+      "I missed my flight to {Propn}. Best thing that ever happened to my {corp}."
     ],
     turn: [
       "And that's when it hit me.",
@@ -341,7 +356,11 @@
       "Leadership isn't a title. It's a {thing}.",
       "My {noun} still brings it up.",
       "That was {N} years ago. I think about it every day.",
-      "And the {thing} just sat there."
+      "And the {thing} just sat there.",
+      "Let that sink in.",
+      "I haven't been the same {noun} since.",
+      "Goosebumps.",
+      "It was never about the {thing}."
     ],
     lesson: [
       "{Noun} is a {noun}. {Noun} is not.",
@@ -367,7 +386,13 @@
       "Nobody remembers your {corp}. They remember your {thing}.",
       "Done is better than {adj}.",
       "Say no to {corp}. Say yes to {thing.pl}.",
-      "Culture eats {corp} for breakfast."
+      "Culture eats {corp} for breakfast.",
+      "Your {thing} is your résumé.",
+      "{Corp} is a marathon, not a {thing}.",
+      "Comfort is the enemy of {corp}.",
+      "Listen more than you {verb}.",
+      "The {thing} you avoid is the {corp} you need.",
+      "Invest in {thing.pl}, not {corp.pl}."
     ],
     brag: [
       "(Posting this from {Propn}.)",
@@ -418,7 +443,13 @@
       "{Corp} is a team sport. Who's on yours?",
       "P.S. I read every comment.",
       "Onward. 🚀",
-      "Grateful. Humbled. {Adj}."
+      "Grateful. Humbled. {Adj}.",
+      "Agree or disagree? 👇",
+      "Would you have done the same?",
+      "Comment \"{Thing}\" if this resonates.",
+      "Your move.",
+      "Who else is {verb.ing} this week?",
+      "See you at the top. 🏔️"
     ],
     // One line per item in the "N things X taught me" listicle.
     list: [
@@ -439,7 +470,13 @@
       "The {thing} is always right.",
       "{Cverb} the process.",
       "Fail {adv}. Learn {adv}.",
-      "There is no {corp} without {thing.pl}."
+      "There is no {corp} without {thing.pl}.",
+      "Your calendar is your {corp}.",
+      "Nobody ever {verb.past} their way to {corp}.",
+      "A {thing} a day keeps the {corp} away.",
+      "{Cadj} people {verb} {thing.pl}.",
+      "The meeting could have been a {thing}.",
+      "Protect your mornings. {Verb} your evenings."
     ]
   };
   // Post skeletons: sequences of beat categories. Lessons expand to 2-3 lines.
@@ -455,7 +492,21 @@
     ["hook", "story", "story", "turn", "lesson3", "closer"],
     ["hook", "lesson2", "story", "closer"],
     ["hook", "story", "brag", "turn", "closer"],
-    ["hook", "turn", "lesson3", "brag", "closer"]
+    ["hook", "turn", "lesson3", "brag", "closer"],
+    ["hook", "story", "lesson2", "closer"],
+    ["hook", "brag", "turn", "lesson3", "closer"],
+    ["hook", "story", "turn", "brag", "closer"],
+    ["hook", "lesson3", "closer"],
+    ["hook", "story", "story", "story", "turn", "closer"],
+    ["hook", "turn", "story", "lesson2", "closer"],
+    ["hook", "brag", "lesson3", "closer"],
+    ["hook", "story", "turn", "lesson2", "brag", "closer"],
+    ["hook", "story", "lesson", "closer"],
+    ["hook", "turn", "lesson", "closer"],
+    ["hook", "story", "turn", "turn", "closer"],
+    ["hook", "lesson2", "turn", "closer"],
+    ["hook", "story", "brag", "lesson3", "closer"],
+    ["hook", "turn", "brag", "story", "turn", "closer"]
   ];
 
   const LETTERS = ["A", "B", "C", "D", "E", "Seed", "Pre-seed"];
@@ -473,7 +524,7 @@
       const capFlag = tok[0] === tok[0].toUpperCase();
       const out = form(pick, tok.toLowerCase());
       return capFlag ? cap(out) : out;
-    }).replace(/([Aa]) (?=[aeiou])/g, "$1n ");
+    }).replace(/\b([Aa]) (?=[aeiou])/g, "$1n ");
   }
 
   // ---------- post formats ----------
@@ -606,6 +657,249 @@
       return beats.flatMap(b => b.split(/(?<=[.!?]) /));
     },
 
+    hotTake: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one([
+          "Unpopular opinion: {corp} is overrated.",
+          "Unpopular opinion: you don't need {corp}. You need {thing.pl}.",
+          "Controversial take: {cadj} {corp.pl} are a scam.",
+          "I'll say it: {corp} is dead."
+        ], rng)),
+        one(["There. I said it.", "Read that again.", "I know. Let me explain."], rng),
+        x(one([
+          "Every {cadj} leader I know has one thing in common: a {thing}.",
+          "The best {noun.pl} I've worked with never once mentioned {corp}.",
+          "We spent {N} years chasing {corp}. The {thing} was right there."
+        ], rng)),
+        x(one(["Change my mind.", "Agree or disagree?", "Unfollow me if you want. I'll be over here {verb.ing} {thing.pl}."], rng))
+      ];
+    },
+
+    anniversary: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one([
+          "{N} years at {company} today. 🎉",
+          "Today marks {N} years since I joined {company} as a junior {noun}.",
+          "LinkedIn tells me it's my {N}-year work anniversary. Time flies when you're {cverb.ing} {corp}."
+        ], rng)),
+        x("When I started, we had {N} {noun.pl}, one {thing}, and a dream."),
+        x(one(["Now we have {N}00 {noun.pl}, {N} {thing.pl}, and the same dream.", "Now I lead the {corp} team. The {thing} is still here."], rng)),
+        x(one(["Thank you, {company}. Here's to {N} more.", "Grateful doesn't cover it.", "Some people change jobs. I changed {thing.pl}."], rng))
+      ];
+    },
+
+    hiring: (pick, rng) => {
+      const x = f(pick, rng);
+      const reqs = shuffle([
+        "✅ {N}+ years of {corp}", "✅ Can {verb} a {thing} under pressure", "✅ {Cadj} mindset",
+        "✅ Comfortable {verb.ing} {noun.pl}", "✅ Owns at least one {thing}", "✅ Passion for {corp}",
+        "✅ Fluent in {corp} and {thing.pl}", "✅ Ready to {cverb} from day one"
+      ], rng).slice(0, 4).map(x);
+      return [
+        one(["We're hiring! 🚀", "My team is growing. 🌱", "🚨 Hiring alert 🚨"], rng),
+        x("Looking for a {title} at {company} who can {cverb} {corp} and {verb} {thing.pl}."),
+        reqs.join("\n"),
+        x(one(["Salary: competitive. Vibes: {adj}.", "Unlimited PTO. Unlimited {thing.pl}.", "Must be comfortable with {corp} and the occasional {thing}."], rng)),
+        x(one(["Drop a comment and I'll reach out. 👇", "Know someone? Tag them.", "No recruiters. Just {noun.pl}."], rng))
+      ];
+    },
+
+    stopStart: (pick, rng) => {
+      const x = f(pick, rng);
+      const doing = ["{verb.ing} {thing.pl}", "{cverb.ing} {corp.pl}", "chasing {corp}", "{verb.ing} your {noun}",
+        "being {adj}", "being {cadj}", "hiding behind {corp}", "saying yes to every {thing}"];
+      const n = 3 + Math.floor(rng() * 3);
+      const pairs = Array.from({ length: n }, () => x(`❌ Stop ${one(doing, rng)}.\n✅ Start ${one(doing, rng)}.`));
+      return [
+        x(one(["If you want {corp} this year, do this:", "Want to be a {cadj} leader? Simple.", "Stop and start. That's the whole {corp} playbook."], rng)),
+        ...pairs,
+        one(["Save this. ♻️", "Which one are you starting today?", "Simple. Not easy."], rng)
+      ];
+    },
+
+    carousel: (pick, rng) => {
+      const x = f(pick, rng);
+      const n = 5 + Math.floor(rng() * 4);
+      const slides = shuffle(T.list.slice(), rng).slice(0, n).map((t, i) => `📄 ${i + 1}/${n}  ${x(t)}`);
+      return [
+        x(one([
+          `${n} slides that will change how you think about {corp}. Swipe →`,
+          "I spent {N} hours on this carousel. Swipe for {corp}. 👉",
+          "The only {corp} guide you'll ever need (free PDF) 👇"
+        ], rng)),
+        slides.join("\n"),
+        x(one(["Save it for later. 🔖", "Repost for your network. ♻️", "Want the PDF? Comment \"{Corp}\"."], rng))
+      ];
+    },
+
+    dayInLife: (pick, rng) => {
+      const x = f(pick, rng);
+      const times = ["4:00am", "4:30am", "5:00am", "5:15am", "6:00am", "7:00am", "9:00am", "12:00pm", "3:00pm", "6:00pm", "9:00pm"];
+      const acts = ["Cold plunge. 🧊", "{Verb} {N} {thing.pl}.", "Journal about {corp}.", "{Cverb} my {corp}.",
+        "Read {N} pages on {corp}.", "Meditate with my {thing}.", "Deep work: {verb.ing} {noun.pl}.",
+        "Protein shake and a {thing}.", "Walk-and-talk about {corp}.", "Gratitude for my {thing.pl}.",
+        "Board call from the sauna.", "Coffee with a {noun}.", "Lights out. {Corp} doesn't sleep, but I do."];
+      const k = 5 + Math.floor(rng() * 3);
+      const slots = shuffle(times.map((_, i) => i), rng).slice(0, k).sort((a, b) => a - b);
+      const picked = shuffle(acts.slice(), rng);
+      return [
+        x(one(["My daily routine as a {title}:", "People ask how I stay {cadj}. Here's my day:", "A day in the life of a {N}-figure founder:"], rng)),
+        slots.map((t, i) => `${times[t]} ${x(picked[i])}`).join("\n"),
+        x(one(["It's not about time. It's about {corp}.", "Discipline is a {thing}.", "What time does your day start?"], rng))
+      ];
+    },
+
+    kid: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one([
+          "My {N}-year-old asked me what I do for work.",
+          "My kid asked why I'm always on my phone.",
+          "My daughter drew a picture of me at work. I was holding a {thing}."
+        ], rng)),
+        x(one(["I said, \"I {cverb} {corp.pl}.\"", "I told her I help {noun.pl} {verb} their {corp}.", "I explained {corp} for {N} minutes."], rng)),
+        x(one(["She said, \"So you {verb} {thing.pl}?\"", "She looked at me and said, \"That sounds {adj}.\"", "She handed me her {thing} and walked away."], rng)),
+        one(["Kids understand this better than most CEOs.", "Out of the mouths of babes.", "I've never been more humbled."], rng),
+        x(one(T.closer, rng))
+      ];
+    },
+
+    eventRecap: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one(["Just got back from {company} Summit in {Propn}. 🎤", "What a week at #{Corp}Con {Propn}!", "Still buzzing from {Propn} {Corp} Week."], rng)),
+        x(one(["{N} sessions. {N} {noun.pl}. One {thing} I'll never forget.", "I met {N} {cadj} leaders and one very confused {noun}."], rng)),
+        "My 3 takeaways:\n" + expandBeat("lesson3", pick, rng),
+        x(one(["See you next year. 🙌", "Who else was there?", "Huge thanks to the {company} team for having me on stage."], rng))
+      ];
+    },
+
+    beforeAfter: (pick, rng) => {
+      const x = f(pick, rng);
+      const then = ["{verb.ing} {thing.pl}", "{adj} and broke", "afraid of {corp}", "{verb.ing} for {noun.pl}", "sleeping on a {thing}", "ignoring {corp}"];
+      const now = ["{cverb.ing} {corp.pl}", "{cadj} and {adj}", "keynoting on {corp}", "leading {N}00 {noun.pl}", "still sleeping on a {thing}, but a {cadj} one", "obsessed with {corp}"];
+      const rows = shuffle([0, 1, 2, 3, 4, 5], rng).slice(0, 3).map(i => `Then: ${cap(x(then[i]))}.\nNow: ${cap(x(now[i]))}.`);
+      return [
+        x(one(["{N} years ago vs. today:", "Me in my 20s vs. me now:", "Before {corp} vs. after {corp}:"], rng)),
+        ...rows,
+        x(one(["Growth is a {thing}.", "Be patient with your {corp}.", "What changed for you?"], rng))
+      ];
+    },
+
+    certification: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one([
+          "I'm happy to share that I've obtained a new certification: Certified {Corp} {Thing} Professional! 🎓",
+          "Thrilled to share I'm now a certified {title}! 🎓",
+          "New badge unlocked: {Cadj} {Corp} Practitioner (Level {N})."
+        ], rng)),
+        x(one(["{N} weeks. {N} modules. One {thing}.", "It wasn't easy. There were nights I {verb.past} my {thing}.", "The final exam was {N} questions about {corp}. I got them all right."], rng)),
+        x(one(["Thank you to {company} for the opportunity.", "Next up: {corp}.", "Never stop {verb.ing}. 📚"], rng))
+      ];
+    },
+
+    fired: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one(["I fired my best {noun} today.", "I had to let go of my top {noun} this morning.", "Yesterday, I fired a {cadj} employee. Here's why."], rng)),
+        x(one(["Their {corp} numbers were incredible.", "They {verb.past} {N} {thing.pl} in a single quarter.", "Everyone loved them. Especially the {thing}."], rng)),
+        x(one(["But they didn't believe in {corp}.", "But they never once {verb.past} a {thing}.", "But they were {adj}. And {adj} doesn't scale."], rng)),
+        x(one(["Culture is a {thing}. Protect it.", "Hard decisions build {cadj} teams.", "Hire slow. Fire {adv}."], rng)),
+        x(one(T.closer, rng))
+      ];
+    },
+
+    commentBait: (pick, rng) => {
+      const x = f(pick, rng);
+      const word = x("{corp}").toUpperCase();
+      return [
+        x(one(["I'm giving away my {corp} playbook for free.", "I made a {N}-page guide to {cadj} {corp}.", "I'm sending my {thing} framework to the first {N}00 people."], rng)),
+        x(one(["It took me {N} years and {N} {thing.pl} to build.", "No catch. Just {corp}.", "It's what took us from {N} to {N}00 {noun.pl}."], rng)),
+        `To get it:\n1. Like this post\n2. Comment "${word}"\n3. Connect with me so I can DM you`,
+        x(one(["Going fast. ⏳", "Only until Friday.", "Let's {cverb} together. 🤝"], rng))
+      ];
+    },
+
+    gratitude: (pick, rng) => {
+      const x = f(pick, rng);
+      const why = ["{verb.ing} the {thing}", "never letting our {corp} slip", "the {adj} {noun.pl}", "{cverb.ing} when nobody else would", "bringing the {thing.pl}"];
+      const shouts = [0, 1, 2].map(() => x(`🙏 @${cap(form(pick, "propn"))} ${cap(form(pick, "propn"))}, for ${one(why, rng)}`));
+      return [
+        x(one(["I don't say this enough: thank you to my team.", "Gratitude post. 🙏", "Can we take a minute to appreciate {noun.pl}?"], rng)),
+        shouts.join("\n"),
+        x(one(["None of this {corp} happens without you.", "Teamwork makes the {corp} work.", "You are the {thing} to my {corp}."], rng)),
+        x(one(T.closer, rng))
+      ];
+    },
+
+    aiPrompt: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one(["I asked AI to explain {corp} like I'm five.", "I asked a chatbot for the secret to {cadj} leadership.", "I gave AI one prompt: \"{Cverb} my {corp}.\""], rng)),
+        "Here's what it said:",
+        x(one(["\"{Corp} is a {thing} you {verb} every day.\"", "\"{Cadj} {corp.pl} start with {thing.pl}.\"", "\"Have you tried {verb.ing} the {thing}?\""], rng)),
+        x(one(["I've been {cverb.ing} {corp} for {N} years. It took the AI {N} seconds.", "Chills.", "I'm not saying AI is replacing leaders. But."], rng)),
+        x(one(["The future of {corp} is here. Are you ready?", "Adapt or get {verb.pp}.", "Thoughts?"], rng))
+      ];
+    },
+
+    resume: (pick, rng) => {
+      const x = f(pick, rng);
+      const tips = shuffle([
+        "❌ Your {thing} isn't a skill.", "❌ Nobody reads the {corp} section.", "✅ Lead with {corp}.",
+        "✅ Mention your {thing}. Always.", "❌ {N} pages is too many.", "✅ Quantify it: \"{Cverb.past} {N}00 {thing.pl}.\"",
+        "❌ \"{Cadj}\" is not a personality.", "✅ Add a photo of your {thing}."
+      ], rng).slice(0, 4).map(x);
+      return [
+        x(one(["Hiring manager here. I've read {N},000 resumes.", "Recruiter here. Your resume has {N} seconds.", "I rejected {N} candidates this week. Here's why."], rng)),
+        tips.join("\n"),
+        x(one(["You're welcome.", "Repost to help a job seeker. ♻️", "Need a resume review? DM me \"{Corp}\"."], rng))
+      ];
+    },
+
+    promotion: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one(["I got promoted!", "Some news: I'm now {title}. 🎉", "After {N} years of {cverb.ing} {corp}, I've been promoted to {title}."], rng)),
+        x(one(["I remember my first day. I didn't even know how to {verb} a {thing}.", "My first manager told me I'd never be {cadj}.", "I started in the mailroom, {verb.ing} {thing.pl}."], rng)),
+        x(one(["Thank you to everyone who believed in my {corp}.", "Proof that {thing.pl} pay off.", "If I can do it, so can your {noun}."], rng)),
+        one(["Onward. 🚀", "Big things coming.", "Now back to work."], rng)
+      ];
+    },
+
+    milestone: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one(["We just hit {N},000 followers! 🎉", "{N}k followers. I'm speechless.", "I started posting {N} months ago. Today, {N},000 of you are here."], rng)),
+        x(one(["When I started, my only follower was my {thing}.", "My first post got {N} likes. Two were from my {noun}.", "I almost quit after my {N}th post about {corp}."], rng)),
+        x(one(["Thank you for {verb.ing} with me.", "Here's to the next {N}k.", "To celebrate, I'm going live on {corp} this Friday."], rng)),
+        x(one(["Drop a 👋 if you've been here since the {thing} post.", "Who's been here since day one?", "Love you all. Even the {noun.pl}."], rng))
+      ];
+    },
+
+    layoff: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        x(one(["This is the hardest post I've ever written.", "Today I had to let {N} {noun.pl} go.", "I'm sharing a photo of me crying. Here's why."], rng)),
+        x(one(["We grew too fast. We {cverb.past} too much {corp}.", "The market {verb.past}. Our {corp} didn't.", "I made {cadj} decisions. Some were wrong."], rng)),
+        x(one(["If you're hiring, these are the most {cadj} {noun.pl} I know.", "Every one of them could {verb} a {thing} blindfolded.", "I'll write a recommendation for every single one."], rng)),
+        x(one(["Leadership is lonely.", "I take full responsibility. (Our Series {L} closes Monday.)", "Hug your team today."], rng))
+      ];
+    },
+
+    coldDm: (pick, rng) => {
+      const x = f(pick, rng);
+      return [
+        one(["Got this DM today:", "A stranger messaged me at 2 a.m.:", "This landed in my inbox this morning:"], rng),
+        x(one(["\"Hi, I see you're a {title}. Can I pick your brain about {corp}?\"", "\"Your post about {thing.pl} changed my life. I quit my job.\"", "\"Hey, quick question: how do I {cverb} my {corp}?\""], rng)),
+        x(one(["I replied with one word: \"{Corp}.\"", "I sent them a {thing}.", "I didn't reply. I posted it here instead."], rng)),
+        x(one(["Be the {noun} you'd want in your DMs.", "Your inbox is your {corp}.", "Kindness is free. {Corp} isn't."], rng))
+      ];
+    },
+
     framework: (pick, rng) => {
       const x = f(pick, rng);
       const short = THING.filter(r => { const w = r[col("NOUN", "word")]; return w.length >= 4 && w.length <= 6; });
@@ -627,12 +921,13 @@
       ];
     }
   };
-  // The classic story format carries most of the feed; each other format is one share.
-  const FORMAT_DRAW = Object.keys(FORMATS).concat(Array(4).fill("story"));
+  // The classic story format gets ten shares; each other format gets one.
+  const FORMAT_DRAW = Object.keys(FORMATS).concat(Array(9).fill("story"));
 
   // ---------- names / companies / titles ----------
   const SUFFIXES = ["ly", "ify", "r", ".ai", " Labs", " Collective", " Ventures", "wise", "gen", "hub", "io",
-    " Partners", " Group", "flow", "stack", " & Co", "ster", " Global", " Dynamics", "base"];
+    " Partners", " Group", "flow", "stack", " & Co", "ster", " Global", " Dynamics", "base",
+    "ology", " Studio", "able", "verse", " Systems", "ly.io"];
   function makeCompany(pick, rng) {
     const w = one(["noun", "thing", "corp"], rng);
     return cap(form(pick, w)) + one(SUFFIXES, rng);
@@ -652,7 +947,11 @@
       () => `Fractional ${cap(form(pick, "corp"))} Officer`,
       () => `${cap(form(pick, "thing"))} Whisperer`,
       () => `Founder & CEO`,
-      () => `Serial Entrepreneur`
+      () => `Serial Entrepreneur`,
+      () => `${cap(form(pick, "thing"))} Evangelist`,
+      () => `Chief of ${cap(form(pick, "thing.pl"))}`,
+      () => `Principal ${cap(form(pick, "corp"))} Architect`,
+      () => `${cap(form(pick, "cadj"))} Growth Hacker`
     ], rng)();
   }
   function makeIdentity(pick, rng) {
@@ -672,7 +971,10 @@
       () => `Building the future of ${form(pick, "thing.pl")}`,
       () => `${cap(form(pick, "thing"))}-first ${form(pick, "corp")} | Opinions my own`,
       () => `Author of "The ${cap(form(pick, "thing"))} Mindset"`,
-      () => `Turning ${form(pick, "thing.pl")} into ${form(pick, "corp")}`
+      () => `Turning ${form(pick, "thing.pl")} into ${form(pick, "corp")}`,
+      () => `Ex-${cap(form(pick, "thing"))} | Now ${cap(form(pick, "corp"))}`,
+      () => `${cap(form(pick, "corp"))} is my love language`,
+      () => `Recovering ${form(pick, "noun")} | ${cap(form(pick, "thing"))} dad`
     ], rng)();
     return { name: `${first} ${last}`, headline: `${title} @ ${company} | ${tagline}`, first };
   }
@@ -752,7 +1054,10 @@
     "This deserves more reactions.", "Legend. 🐐", "Bookmarking. 🔖",
     "{Adj} take, @first.", "Came for the {thing}. Stayed for the {corp}.",
     "Hi @first, I help {noun.pl} {cverb} their {corp}. Open to a quick call?",
-    "Reposting. ♻️"
+    "Reposting. ♻️",
+    "Thanks for sharing, @first. Printing this out.", "Not me reading this during a {corp} meeting.",
+    "This is why I follow you, @first.", "Big if true.", "The {thing} analogy is 🔥",
+    "Hi @first, loved this. I sent you a connection request!", "Needed this more than my {thing}."
   ];
 
   function build(seed, dials) {
