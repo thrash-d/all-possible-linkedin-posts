@@ -51,17 +51,38 @@ THEMES = [
     "funeral", "wedding", "surfing", "golf", "chess", "gardening", "parenting",
     "marriage", "camping", "fishing", "hunting", "barbecue", "pizza", "coffee",
     "whiskey", "yoga", "meditation", "poker", "lottery", "casino", "divorce",
-    "therapy", "church", "monastery", "prison", "military", "pirate", "samurai",
-    "viking", "medieval", "empire", "astronaut", "dinosaur", "volcano",
-    "tornado", "hurricane", "ocean", "desert", "jungle", "farm", "tractor",
-    "cattle", "horse", "chicken", "bees", "ants", "wolves", "sharks", "octopus",
-    "penguin", "pelican", "raccoon", "zombie", "vampire", "ghost", "wizard",
-    "dragon", "castle", "circus", "clown", "magician", "ballet", "opera",
-    "jazz", "karaoke", "bowling", "laundry", "plumbing", "dentist", "surgery",
-    "hospital", "airport", "subway", "traffic", "taxes", "mortgage",
-    "retirement", "kindergarten", "prom", "homework", "lemonade", "lawnmower",
-    "dishwasher", "microwave", "printer", "hangover", "cruise", "wrestling",
-    "football", "hockey", "rodeo", "bingo",
+    "therapy", "church", "monastery", "prison", "military", "pirate",
+    "samurai", "viking", "medieval", "empire", "astronaut", "dinosaur",
+    "volcano", "tornado", "hurricane", "ocean", "desert", "jungle", "farm",
+    "tractor", "cattle", "horse", "chicken", "bees", "ants", "wolves",
+    "sharks", "octopus", "penguin", "pelican", "raccoon", "zombie", "vampire",
+    "ghost", "wizard", "dragon", "castle", "circus", "clown", "magician",
+    "ballet", "opera", "jazz", "karaoke", "bowling", "laundry", "plumbing",
+    "dentist", "surgery", "hospital", "airport", "subway", "traffic", "taxes",
+    "mortgage", "retirement", "kindergarten", "prom", "homework", "lemonade",
+    "lawnmower", "dishwasher", "microwave", "printer", "hangover", "cruise",
+    "wrestling", "football", "hockey", "rodeo", "bingo", "kombucha",
+    "crossfit", "skateboarding", "snowboarding", "skiing", "hiking",
+    "kayaking", "sailing", "cycling", "triathlon", "boxing", "karate",
+    "fencing", "archery", "baseball", "basketball", "soccer", "cricket",
+    "rugby", "tennis", "volleyball", "bakery", "sushi", "tacos", "burrito",
+    "barista", "brunch", "avocado", "smoothie", "cheese", "chocolate", "donut",
+    "pancakes", "ramen", "wine", "beer", "tequila", "cocktail", "minivan",
+    "motorcycle", "bicycle", "submarine", "helicopter", "rocket", "train",
+    "elevator", "garage", "basement", "attic", "treehouse", "igloo",
+    "lighthouse", "library", "museum", "zoo", "aquarium", "carnival", "ninja",
+    "cowboy", "knight", "gladiator", "pharaoh", "mermaid", "unicorn", "yeti",
+    "alien", "robot", "superhero", "werewolf", "mummy", "witch", "goblin",
+    "lego", "puzzle", "crossword", "sudoku", "arcade", "trampoline",
+    "sandcastle", "snowman", "halloween", "thanksgiving", "christmas",
+    "birthday", "graduation", "honeymoon", "vacation", "reunion", "sleepover",
+    "picnic", "campfire", "fireworks", "firefighter", "lifeguard", "janitor",
+    "lumberjack", "beekeeping", "blacksmith", "carpentry", "knitting",
+    "pottery", "origami", "juggling", "comedy", "earthquake", "avalanche",
+    "glacier", "swamp", "eclipse", "jellyfish", "flamingo", "sloth", "goose",
+    "squirrel", "hamster", "goldfish", "llama", "walrus", "hedgehog", "turtle",
+    "snail", "pigeon", "owl", "frog", "nap", "insomnia", "chiropractor", "gym",
+    "sauna", "massage", "bitcoin",
 ]
 
 # Themes with no vector of their own borrow the average of these.
@@ -201,7 +222,6 @@ def main():
         rows["PROPN"].append([w, syllables(w), round(z, 1)])
 
     print("Computing theme neighbors...", file=sys.stderr)
-    index_of = {w: i for i, w in enumerate(words)}
     themes = {}
     for theme in THEMES:
         sources = THEME_ALIASES.get(theme, [theme])
