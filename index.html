@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>All Possible LinkedIn Posts</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23e84430'/%3E%3Cpath d='M13 7l-2 18M21 7l-2 18M8 13h17M7 19h17' stroke='%23141414' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
   :root {
     color-scheme: dark;
@@ -50,16 +51,7 @@
   .headline { color: var(--muted); font-size: 13px; line-height: 1.35; }
   .meta { color: var(--faint); font-size: 12px; }
   .body { white-space: pre-line; color: var(--text-2); overflow-wrap: anywhere; }
-  .body.clamped { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-  .more { justify-self: start; background: none; border: 0; padding: 0; color: var(--muted); font-size: 14px; }
-  .more:hover { color: var(--text); }
   .stats { color: var(--faint); font-size: 12px; padding-top: 8px; border-top: 1px solid var(--line); }
-  .comments { display: grid; gap: 10px; }
-  .comment { display: grid; gap: 1px; padding-left: 12px; border-left: 1px solid var(--line-strong); }
-  .comment .c-name { color: var(--text); font-size: 13px; font-weight: 500; }
-  .comment .c-head { color: var(--faint); font-size: 12px; }
-  .comment .c-text { color: var(--text-2); font-size: 14px; }
-  .more-comments { color: var(--faint); font-size: 12px; }
   .actions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
   .actions button { background: none; border: 0; padding: 0; color: var(--muted); font-size: 13px; }
   .actions button:hover { color: var(--text); }
@@ -1036,30 +1028,6 @@
     return parts.join(level === 3 ? " " : ". ").replace(/—\. /g, "— ").replace(/— ([a-z])/g, (m, c) => "— " + c);
   }
 
-  // @first is the poster's first name.
-  const COMMENTS = [
-    "Great {noun}! 🙌", "This. 👏", "So {adj}.", "Commenting for reach.", "Needed this today.",
-    "Hi @first, I'd love to connect about your {noun} needs.",
-    "Congrats @first! Well deserved. 🎉", "Love this, @first.", "Couldn't agree more.",
-    "This is the {corp} content I'm here for.", "Saving this for my next {corp} offsite.",
-    "My {thing} and I both needed this.", "Wow. Just wow.", "Great insight! Thanks for sharing.",
-    "{Corp} is so underrated.", "100% this.", "Following for more.", "Sharing with my team. 🙏",
-    "Brb, {verb.ing} my {thing.pl}.", "Insightful! 💡", "I felt this in my {thing}.",
-    "Interested", "Interested 👀", "Thanks for the reminder that {corp} starts with us.",
-    "So true. {Corp} is a journey, not a {thing}.", "Every leader should read this.",
-    "Commenting to boost. Great post @first!", "Wait, is this about {company}?",
-    "The {thing} part got me. 😂", "I've been saying this for {N} years.",
-    "Hi @first, quick question about {cadj} {corp}. Mind if I DM you?",
-    "Agree. Though I'd add {thing.pl}.", "Needed this before my 4 p.m. {corp} sync.",
-    "This deserves more reactions.", "Legend. 🐐", "Bookmarking. 🔖",
-    "{Adj} take, @first.", "Came for the {thing}. Stayed for the {corp}.",
-    "Hi @first, I help {noun.pl} {cverb} their {corp}. Open to a quick call?",
-    "Reposting. ♻️",
-    "Thanks for sharing, @first. Printing this out.", "Not me reading this during a {corp} meeting.",
-    "This is why I follow you, @first.", "Big if true.", "The {thing} analogy is 🔥",
-    "Hi @first, loved this. I sent you a connection request!", "Needed this more than my {thing}."
-  ];
-
   function build(seed, dials) {
     const rng = makeRng(seed);
     const themeIdx = Math.floor(rng() * THEMES.length);
@@ -1086,13 +1054,7 @@
     const reactions = Math.floor(200 + rng() ** 2 * 40000);
     const comments = Math.floor(reactions * (0.03 + rng() * 0.12));
     const reposts = Math.floor(reactions * (0.005 + rng() * 0.03));
-    const cPick = makePicker(rng, themeIdx, dials.coh);
-    const shown = [0, 1].map(() => ({
-      who: `${cap(form(cPick, "propn"))} ${cap(form(cPick, "propn"))}`,
-      head: `${cap(form(cPick, "adj"))} ${cap(form(cPick, "noun"))} | ${cap(form(cPick, "noun"))}`,
-      text: fillTemplate(one(COMMENTS, rng).replace("@first", id.first), cPick, rng)
-    }));
-    return { seed, ...id, text, reactions, comments, reposts, shown, age: ["2h", "5h", "1d", "3d", "1w"][Math.floor(rng() * 5)] };
+    return { seed, ...id, text, reactions, comments, reposts, age: ["2h", "5h", "1d", "3d", "1w"][Math.floor(rng() * 5)] };
   }
 
   // ---------- render ----------
@@ -1113,20 +1075,14 @@
     const who = el("div", "who");
     who.append(el("span", "name", p.name), el("span", "headline", p.headline), el("span", "meta", `${p.age} · Edited`));
     author.append(who);
-    const body = el("div", "body clamped", p.text);
-    const more = el("button", "more", "…see more"); more.type = "button";
-    more.addEventListener("click", () => { body.classList.remove("clamped"); more.hidden = true; });
+    const body = el("div", "body", p.text);
     const stats = el("div", "stats", `${fmt(p.reactions)} reactions · ${fmt(p.comments)} comments · ${fmt(p.reposts)} reposts`);
-    const comments = el("div", "comments");
-    p.shown.forEach(c => { const row = el("div", "comment"); row.append(el("span", "c-name", c.who), el("span", "c-head", c.head), el("span", "c-text", c.text)); comments.append(row); });
-    comments.append(el("span", "more-comments", `View ${fmt(Math.max(0, p.comments - 2))} more comments`));
     const actions = el("div", "actions");
     const cText = el("button", null, "Copy text"); cText.type = "button"; cText.addEventListener("click", () => copy(build(seed, dials()).text));
     const cLink = el("button", null, "Copy link"); cLink.type = "button";
     cLink.addEventListener("click", () => copy(location.href.split("#")[0] + "#p" + seed));
     actions.append(cText, cLink, el("span", "no", seed));
-    art.append(author, body, more, stats, comments, actions);
-    requestAnimationFrame(() => { if (body.scrollHeight <= body.clientHeight + 2) more.hidden = true; });
+    art.append(author, body, stats, actions);
     return art;
   }
   function append(n) { for (let i = 0; i < n; i++) feed.append(renderPost(randSeed())); }
