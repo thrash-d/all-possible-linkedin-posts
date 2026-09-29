@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Bundle the page and dictionary into one double-clickable file.
 
-Reads linkedin-posts.html (the editable source, which fetches lexicon.json)
-and lexicon.json, and writes linkedin-posts-standalone.html with the dictionary
-embedded and the fetch replaced by an in-page read.
+Reads linkedin-posts.html (the editable source, which loads generator.js and
+fetches lexicon.json), generator.js, and lexicon.json, and writes
+linkedin-posts-standalone.html with both inlined and the fetch replaced by an
+in-page read.
 
 Also writes index.html, the source wrapped in a full HTML document with the
-fetch kept. That's the GitHub Pages copy: it loads lexicon.json separately,
-which Pages serves gzipped, instead of shipping the whole dictionary inline.
+script tag and fetch kept. That's the GitHub Pages copy: it loads generator.js
+and lexicon.json separately, which Pages serves gzipped, instead of shipping
+the whole dictionary inline.
 
 Run from anywhere:
     python build/make_standalone.py
@@ -20,6 +22,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 SRC = ROOT / "linkedin-posts.html"
 LEX = ROOT / "lexicon.json"
+GEN = ROOT / "generator.js"
 OUT = ROOT / "linkedin-posts-standalone.html"
 WEB = ROOT / "index.html"
 
@@ -40,6 +43,12 @@ def main():
     WEB.write_text(page, encoding="utf-8")
     print(f"Wrote {WEB.name} ({len(page) / 1e3:.0f} KB)")
 
+    # The standalone file can't load generator.js from next to it, so inline it.
+    tag = '<script src="generator.js"></script>'
+    if tag not in page:
+        raise SystemExit(f"{SRC.name} has no {tag}")
+    page = page.replace(tag, "<script>\n" + GEN.read_text(encoding="utf-8") + "</script>", 1)
+
     # Escape so the JSON can't terminate the <script> block or break line parsing.
     safe = lex.replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
     data_block = '<script id="lexicon-data" type="application/json">' + safe + "</script>\n<script>"
@@ -51,7 +60,7 @@ def main():
     embedded = (
         '  function fail(msg) { $("count").textContent = ""; $("loading").textContent = msg; }\n'
         "  try {\n"
-        '    LEX = JSON.parse(document.getElementById("lexicon-data").textContent);\n'
+        '    gen = createGenerator(JSON.parse(document.getElementById("lexicon-data").textContent));\n'
         "    start();\n"
         '  } catch (e) { fail("Couldn\'t build the feed: " + e.message); }\n'
         "})();"
