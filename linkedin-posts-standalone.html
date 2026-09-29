@@ -1106,7 +1106,7 @@
     buildPools();
     const wc = Object.values(LEX.words).reduce((a, r) => a + r.length, 0);
     const shapes = SKELETONS.length + Object.keys(FORMATS).length - 1;
-    $("count").textContent = `${fmt(wc)} words × ${shapes} post shapes × ${themeNames.length} themes. The number is a joke; the feed doesn't repeat.`;
+    $("count").textContent = `${fmt(wc)} words × ${shapes} post shapes × ${themeNames.length} themes.`;
     $("loading").textContent = "The feed doesn't end.";
     syncOutputs();
     const linked = /^#p([a-z0-9]+)$/i.exec(location.hash);
