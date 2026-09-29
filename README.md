@@ -14,7 +14,6 @@ Open the [live page](https://thrash-d.github.io/all-possible-linkedin-posts/), o
 - Humblebrag: how many "posting this from Bali" type asides get slipped in.
 - Em dashes: from none to LinkedIn's favorite punctuation taking over.
 - Hashtags: 0 to 8.
-- Haiku: rewrites each post as a 5-7-5.
 
 "Copy link" copies a link with the post's seed in it. Opening that link rebuilds the exact same post.
 

@@ -85,10 +85,6 @@
       <label for="tags">Hashtags <output id="tagsOut" for="tags"></output></label>
       <input id="tags" type="range" min="0" max="8" step="1" value="4">
     </div>
-    <div class="dial" style="flex:0 0 auto;min-width:0">
-      <label for="haiku">Haiku</label>
-      <input id="haiku" type="checkbox">
-    </div>
     <button class="primary" id="refresh" type="button">Refresh feed</button>
   </section>
 
@@ -973,28 +969,6 @@
     return [...tags];
   }
 
-  // ---------- haiku mode ----------
-  function sylOf(pos, row) { const c = col(pos, "syl"); return c == null ? 2 : (row[c] || 2); }
-  function haikuLine(pick, rng, target) {
-    // greedy fill NOUN/ADJ/VERB toward a syllable target
-    const order = ["adj", "noun", "verb"];
-    let out = [], total = 0, guard = 0;
-    while (total < target && guard++ < 40) {
-      const spec = order[Math.floor(rng() * order.length)];
-      const pos = spec === "adj" ? "ADJ" : spec === "verb" ? "VERB" : "NOUN";
-      const row = pick(pos);
-      const s = sylOf(pos, row);
-      if (total + s > target) continue;
-      out.push(row[col(pos, "word")]);
-      total += s;
-    }
-    return out.join(" ");
-  }
-  function buildHaiku(pick, rng) {
-    const lines = [haikuLine(pick, rng, 5), haikuLine(pick, rng, 7), haikuLine(pick, rng, 5)];
-    return cap(lines.join("\n"));
-  }
-
   // ---------- post assembly ----------
   function expandBeat(cat, pick, rng) {
     if (cat === "lesson2" || cat === "lesson3") {
@@ -1026,22 +1000,17 @@
     const pick = makePicker(rng, themeIdx, dials.coh);
     const id = makeIdentity(pick, rng);
 
-    let text;
-    if (dials.haiku) {
-      text = buildHaiku(pick, rng);
-    } else {
-      const beats = FORMATS[one(FORMAT_DRAW, rng)](pick, rng);
-      // insert brags per humblebrag dial
-      if (dials.brag) {
-        for (let k = 0; k < dials.brag; k++) {
-          const at = 1 + Math.floor(rng() * Math.max(1, beats.length - 1));
-          beats.splice(at, 0, expandBeat("brag", pick, rng));
-        }
+    const beats = FORMATS[one(FORMAT_DRAW, rng)](pick, rng);
+    // insert brags per humblebrag dial
+    if (dials.brag) {
+      for (let k = 0; k < dials.brag; k++) {
+        const at = 1 + Math.floor(rng() * Math.max(1, beats.length - 1));
+        beats.splice(at, 0, expandBeat("brag", pick, rng));
       }
-      text = beats.join("\n\n");
-      text = applyDashes(text, dials.dash, rng);
-      if (dials.tags) text += "\n\n" + makeHashtags(pick, rng, dials.tags).join(" ");
     }
+    let text = beats.join("\n\n");
+    text = applyDashes(text, dials.dash, rng);
+    if (dials.tags) text += "\n\n" + makeHashtags(pick, rng, dials.tags).join(" ");
 
     const reactions = Math.floor(200 + rng() ** 2 * 40000);
     const comments = Math.floor(reactions * (0.03 + rng() * 0.12));
@@ -1056,7 +1025,7 @@
   function toast(msg) { const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 1400); }
   async function copy(text) { try { await navigator.clipboard.writeText(text); toast("Copied"); } catch { toast("Copy blocked here. Select the text instead."); } }
 
-  function dials() { return { coh: +$("coh").value, brag: +$("brag").value, dash: +$("dash").value, tags: +$("tags").value, haiku: $("haiku").checked }; }
+  function dials() { return { coh: +$("coh").value, brag: +$("brag").value, dash: +$("dash").value, tags: +$("tags").value }; }
 
   function renderPost(seed) {
     const p = build(seed, dials());
@@ -1086,7 +1055,6 @@
   function syncOutputs() { const d = dials(); $("cohOut").textContent = cohLabels[d.coh]; $("bragOut").textContent = bragLabels[d.brag]; $("dashOut").textContent = dashLabels[d.dash]; $("tagsOut").textContent = String(d.tags); }
 
   ["coh", "brag", "dash", "tags"].forEach(id => $(id).addEventListener("input", () => { syncOutputs(); rerender(); }));
-  $("haiku").addEventListener("change", rerender);
   $("refresh").addEventListener("click", () => { feed.replaceChildren(); append(3); window.scrollTo({ top: 0 }); });
 
   function start() {
